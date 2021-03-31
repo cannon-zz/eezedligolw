@@ -1,4 +1,4 @@
-INCLUDES = -I../src/include
+AM_CPPFLAGS = -I../src/include
 LDADD = ../src/lib/libezligolw.la
 
 noinst_PROGRAMS =

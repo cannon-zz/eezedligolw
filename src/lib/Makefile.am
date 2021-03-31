@@ -1,4 +1,4 @@
-INCLUDES = -I../include
+AM_CPPFLAGS = -I../include
 
 lib_LTLIBRARIES = libezligolw.la
 
