@@ -2,6 +2,7 @@
 AC_INIT([libezligolw],[0.1.0],[kipp@gravity.phys.uwm.edu])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([gnuscripts])
+AC_CONFIG_MACRO_DIRS([gnuscripts])
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 AC_CONFIG_FILES([                        \
 	Makefile                         \
