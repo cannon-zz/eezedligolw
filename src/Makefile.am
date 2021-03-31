@@ -1,0 +1,1 @@
+SUBDIRS = ezxml include lib
