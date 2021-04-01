@@ -39,7 +39,7 @@ static int sim_burst_row_callback(struct ligolw_table *table, struct ligolw_tabl
 	SimBurst **head = data;
 	SimBurst *new = XLALCreateSimBurst();
 	struct ligolw_unpacking_spec sim_burst_spec[] = {
-		{NULL, "process_id", ligolw_cell_type_ilwdchar, LIGOLW_UNPACKING_REQUIRED},
+		{&new->process_id, "process_id", ligolw_cell_type_int_8s, LIGOLW_UNPACKING_REQUIRED},
 		{NULL, "waveform", ligolw_cell_type_lstring, LIGOLW_UNPACKING_REQUIRED},
 		{&new->ra, "ra", ligolw_cell_type_real_8, LIGOLW_UNPACKING_REQUIRED},
 		{&new->dec, "dec", ligolw_cell_type_real_8, LIGOLW_UNPACKING_REQUIRED},
@@ -57,7 +57,8 @@ static int sim_burst_row_callback(struct ligolw_table *table, struct ligolw_tabl
 		{&new->hrss, "hrss", ligolw_cell_type_real_8, LIGOLW_UNPACKING_REQUIRED},
 		{&new->egw_over_rsquared, "egw_over_rsquared", ligolw_cell_type_real_8, LIGOLW_UNPACKING_REQUIRED},
 		{&new->waveform_number, "waveform_number", ligolw_cell_type_int_8u, LIGOLW_UNPACKING_REQUIRED},
-		{NULL, "simulation_id", ligolw_cell_type_ilwdchar, LIGOLW_UNPACKING_REQUIRED},
+		{&new->time_slide_id, "time_slide_id", ligolw_cell_type_int_8s, LIGOLW_UNPACKING_REQUIRED},
+		{&new->simulation_id, "simulation_id", ligolw_cell_type_int_8s, LIGOLW_UNPACKING_REQUIRED},
 		{NULL, NULL, -1, 0}
 	};
 
