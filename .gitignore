@@ -1,4 +1,8 @@
 .deps
+.libs
+*.la
+*.lo
+*.o
 aclocal.m4
 autom4te.cache
 config.h
@@ -6,6 +10,7 @@ config.h.in
 config.log
 config.status
 configure
+examples/sim_burst_example
 gnuscripts/compile
 gnuscripts/config.guess
 gnuscripts/config.sub
