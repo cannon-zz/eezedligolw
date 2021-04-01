@@ -19,10 +19,10 @@
  */
 
 
-#include <libezligolw/ezligolw.h>
 #include <lal/LIGOLwXML.h>
-#include <lal/LIGOMetadataTables.h>
-#include <lal/LIGOMetadataUtils.h>
+#include <lal/SnglBurstUtils.h>
+#include <lal/XLALError.h>
+#include <libezligolw/ezligolw.h>
 
 
 /*
@@ -73,7 +73,7 @@ static int sim_burst_row_callback(struct ligolw_table *table, struct ligolw_tabl
 	 * by value rather than reference.  ligolw_unpacking_row_builder()
 	 * cleans up row's memory for us. */
 	strncpy(new->waveform, ligolw_row_get_cell(row, "waveform").as_string, LIGOMETA_WAVEFORM_MAX - 1);
-	new->waveform[LIGOMETA_WAVEFORM_MAX] = '\0';
+	new->waveform[LIGOMETA_WAVEFORM_MAX-1] = '\0';
 
 	result_code = ligolw_unpacking_row_builder(table, row, sim_burst_spec);
 	if(result_code > 0) {
@@ -105,7 +105,6 @@ int XLALSimBurstTableFromLIGOLw(
 	int gps_end
 )
 {
-	static const char func[] = "XLALSimBurstTableFromLIGOLw";
 	ezxml_t xmldoc;
 	ezxml_t elem;
 	struct ligolw_table *table;
@@ -117,7 +116,7 @@ int XLALSimBurstTableFromLIGOLw(
 	xmldoc = ezxml_parse_file(filename);
 	if(!xmldoc) {
 		XLALPrintError("error parsing %s\n", filename);
-		XLAL_ERROR(func, XLAL_EIO);
+		XLAL_ERROR(XLAL_EIO);
 	}
 
 	/* find the sim_burst table */
@@ -125,7 +124,7 @@ int XLALSimBurstTableFromLIGOLw(
 	if(!elem) {
 		XLALPrintError("unable to locate sim_burst table\n");
 		ezxml_free(xmldoc);
-		XLAL_ERROR(func, XLAL_EDATA);
+		XLAL_ERROR(XLAL_EDATA);
 	}
 
 	/* convert the rows into a LAL-style linked list */
@@ -133,7 +132,7 @@ int XLALSimBurstTableFromLIGOLw(
 	if(!table) {
 		XLALPrintError("failure parsing sim_burst table\n");
 		ezxml_free(xmldoc);
-		XLAL_ERROR(func, XLAL_EDATA);
+		XLAL_ERROR(XLAL_EDATA);
 	}
 
 	/* clean up */
@@ -152,15 +151,11 @@ int XLALSimBurstTableFromLIGOLw(
 
 static void write(const SimBurst *sims, const char *filename)
 {
-	LALStatus status;
-	LIGOLwXMLStream xmlfp;
+	LIGOLwXMLStream *xml;
 
-	memset(&status, 0, sizeof(status));
-	memset(&xmlfp, 0, sizeof(xmlfp));
-
-	LALOpenLIGOLwXMLFile(&status, &xmlfp, filename);
-	XLALWriteLIGOLwXMLSimBurstTable(&xmlfp, sims);
-	LALCloseLIGOLwXMLFile(&status, &xmlfp);
+	xml = XLALOpenLIGOLwXMLFile(filename);
+	XLALWriteLIGOLwXMLSimBurstTable(xml, sims);
+	XLALCloseLIGOLwXMLFile(xml);
 }
 
 
@@ -168,8 +163,6 @@ static void write(const SimBurst *sims, const char *filename)
 int main(int argc, char *argv[])
 {
 	SimBurst *sims;
-
-	lalDebugLevel = LALERROR | LALNMEMDBG | LALNMEMPAD | LALNMEMTRK;
 
 	XLALSimBurstTableFromLIGOLw(&sims, "HL-INJECTIONS_PLAYGROUND-793154935-2524278.xml", 0, 0);
 
