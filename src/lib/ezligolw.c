@@ -387,9 +387,9 @@ int ligolw_unpacking_row_builder(struct ligolw_table *table, struct ligolw_table
 	struct ligolw_unpacking_spec *spec;
 
 	for(spec = data; spec->name; spec++) {
-		int c;
 		enum ligolw_table_cell_type type;
-		if(c = ligolw_table_get_column(table, spec->name, &type) < 0) {
+		int c = ligolw_table_get_column(table, spec->name, &type);
+		if(c < 0) {
 			/* no column by that name */
 			if(!(spec->flags & LIGOLW_UNPACKING_REQUIRED))
 				/* not required */
