@@ -482,7 +482,7 @@ int ligolw_table_print(FILE *f, struct ligolw_table *table)
 	strcpy(short_name, table->name);
 	{
 	char *x = strchr(short_name, ':');
-	if(x);
+	if(x)
 		*x = '\0';
 	}
 
