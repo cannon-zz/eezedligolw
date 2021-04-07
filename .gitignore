@@ -16,8 +16,14 @@ gnuscripts/config.guess
 gnuscripts/config.sub
 gnuscripts/depcomp
 gnuscripts/install-sh
+gnuscripts/libtool.m4
 gnuscripts/ltmain.sh
+gnuscripts/lt~obsolete.m4
+gnuscripts/ltoptions.m4
+gnuscripts/ltsugar.m4
+gnuscripts/ltversion.m4
 gnuscripts/missing
+gnuscripts/test-driver
 libezligolw.pc
 libtool
 Makefile
