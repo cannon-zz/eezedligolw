@@ -27,6 +27,7 @@ AC_SUBST([pkgconfigdir],[${libdir}/pkgconfig])
 # Checks for programs
 AC_PROG_CC
 AC_PROG_LIBTOOL
+AX_CFLAGS_WARN_ALL
 
 # Check for zlib library
 AC_CHECK_HEADER([zlib.h])
