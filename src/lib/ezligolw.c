@@ -418,6 +418,7 @@ int ligolw_unpacking_row_builder(struct ligolw_table *table, struct ligolw_table
 
 		case ligolw_cell_type_blob:
 			*(const unsigned char **) spec->dest = row.cells[c].as_blob;
+			break;
 
 		case ligolw_cell_type_int_2s:
 			*(int16_t *) spec->dest = row.cells[c].as_int;
