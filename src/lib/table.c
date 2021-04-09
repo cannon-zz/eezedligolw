@@ -18,10 +18,11 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <ctype.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <tokenizer.h>
 #include <libezligolw/ezligolw.h>
 
 
@@ -33,17 +34,7 @@
 
 static const char *ligolw_strip_table_name(const char *Name)
 {
-	char buff[strlen(Name) + 1];
-	char *pos = buff;
-	char *start;
-
-	strcpy(buff, Name);
-
-	do
-		start = strsep(&pos, ":");
-	while(pos && strncmp(pos, "table", 5));
-
-	return Name + (start - buff);
+	return ligolw_strip_name(Name, "table");
 }
 
 
@@ -66,65 +57,6 @@ static const char *ligolw_strip_column_name(const char *Name)
 	while(pos);
 
 	return Name + (start - buff);
-}
-
-
-/*
- * Convert a LIGO Light Weight type name string to/from a numeric type
- * index.
- */
-
-
-static const struct name_to_enum {
-	const char *name;
-	enum ligolw_table_cell_type type;
-} name_to_enum[] = {
-	{"char_s", ligolw_cell_type_char_s},
-	{"char_v", ligolw_cell_type_char_v},
-	{"ilwd:char", ligolw_cell_type_ilwdchar},
-	{"ilwd:char_u", ligolw_cell_type_ilwdchar_u},
-	{"lstring", ligolw_cell_type_lstring},
-	{"string", ligolw_cell_type_lstring},
-	{"int_2s", ligolw_cell_type_int_2s},
-	{"int_2u", ligolw_cell_type_int_2u},
-	{"int_4s", ligolw_cell_type_int_4s},
-	{"int", ligolw_cell_type_int_4s},
-	{"int_4u", ligolw_cell_type_int_4u},
-	{"int_8s", ligolw_cell_type_int_8s},
-	{"int_8u", ligolw_cell_type_int_8u},
-	{"real_4", ligolw_cell_type_real_4},
-	{"float", ligolw_cell_type_real_4},
-	{"real_8", ligolw_cell_type_real_8},
-	{"double", ligolw_cell_type_real_8},
-	{NULL, -1}
-};
-
-
-enum ligolw_table_cell_type ligolw_table_type_name_to_enum(const char *name)
-{
-	const struct name_to_enum *n_to_e;
-
-	for(n_to_e = name_to_enum; n_to_e->name; n_to_e++)
-		if(!strcmp(n_to_e->name, name))
-			/* found it */
-			return n_to_e->type;
-
-	/* unrecognized type */
-	return -1;
-}
-
-
-const char *ligolw_table_type_enum_to_name(enum ligolw_table_cell_type t)
-{
-	const struct name_to_enum *n_to_e;
-
-	for(n_to_e = name_to_enum; n_to_e->name; n_to_e++)
-		if(n_to_e->type == t)
-			/* found it */
-			return n_to_e->name;
-
-	/* unrecognized type */
-	return NULL;
 }
 
 
@@ -161,49 +93,6 @@ int ligolw_table_default_row_callback(struct ligolw_table *table, struct ligolw_
  */
 
 
-static void next_token(char **start, char **end, char **next_start, char delimiter)
-{
-	char *c;
-
-	/* find the token's start */
-	for(c = *start; *c && isspace(*c) && *c != delimiter && *c != '"'; c++);
-
-	/* quoted token */
-	if(*c == '"') {
-		/* start at first character next to quote charater '"' */
-		*start = ++c;
-		/* end at '\0' or '"' */
-		for(; *c && *c != '"'; c++);
-		*end = c;
-		/* find the delimiter, this marks the end of current token */
-		if(*c == '"')
-			c++;
-		for(; *c && isspace(*c) && *c != delimiter; c++);
-	}
-	/* token has zero length */
-	else if(!*c || *c == delimiter) {
-		/* at the delimiter, this marks the end of current token */
-		*start = *end = c;
-	}
-	/* unquoted token */
-	else {
-		/* start at first non-white space and non-quote character */
-		*start = c;
-		/* end at space or delimiter or '\0' */
-		for(++c; *c && !isspace(*c) && *c != delimiter; c++);
-		*end = c;
-		/* find the delimiter, this marks the end of current token */
-		for(; *c && isspace(*c) && *c != delimiter; c++);
-	}
-
-	/* skip the delimiter and white spaces and go to next start */
-	if(*c == delimiter)
-		c++;
-	for(; *c && isspace(*c) && *c != delimiter; c++);
-	*next_start = c;
-}
-
-
 struct ligolw_table *ligolw_table_parse(ezxml_t elem, int (row_callback)(struct ligolw_table *, struct ligolw_table_row, void *), void *callback_data)
 {
 	struct ligolw_table *table;
@@ -227,7 +116,7 @@ struct ligolw_table *ligolw_table_parse(ezxml_t elem, int (row_callback)(struct 
 
 		table->columns[table->n_columns].name = ligolw_strip_column_name(ezxml_attr(column, "Name"));
 		table->columns[table->n_columns].table = table;
-		table->columns[table->n_columns].type = ligolw_table_type_name_to_enum(ezxml_attr(column, "Type"));
+		table->columns[table->n_columns].type = ligolw_type_name_to_enum(ezxml_attr(column, "Type"));
 
 		table->n_columns++;
 	}
@@ -254,7 +143,7 @@ struct ligolw_table *ligolw_table_parse(ezxml_t elem, int (row_callback)(struct 
 		for(c = 0; c < table->n_columns; c++) {
 			char *end, *next;
 
-			next_token(&txt, &end, &next, table->delimiter);
+			ligolw_next_token(&txt, &end, &next, table->delimiter);
 
 			switch(table->columns[c].type) {
 			case ligolw_cell_type_char_s:
@@ -336,11 +225,11 @@ void ligolw_table_free(struct ligolw_table *table)
  * Get a column index by name from within a table.  Returns the index of
  * the column within table's columns array (and thus of the corresponding
  * cell within each row's cell array) or -1 on failure.  If type is not
- * NULL, the place it points to is set to the columns's table_cell_type.
+ * NULL, the place it points to is set to the columns's cell_type.
  */
 
 
-int ligolw_table_get_column(struct ligolw_table *table, const char *name, enum ligolw_table_cell_type *type)
+int ligolw_table_get_column(struct ligolw_table *table, const char *name, enum ligolw_cell_type *type)
 {
 	int i;
 
@@ -387,7 +276,7 @@ int ligolw_unpacking_row_builder(struct ligolw_table *table, struct ligolw_table
 	struct ligolw_unpacking_spec *spec;
 
 	for(spec = data; spec->name; spec++) {
-		enum ligolw_table_cell_type type;
+		enum ligolw_cell_type type;
 		int c = ligolw_table_get_column(table, spec->name, &type);
 		if(c < 0) {
 			/* no column by that name */
@@ -490,7 +379,7 @@ int ligolw_table_print(FILE *f, struct ligolw_table *table)
 	/* print the table metadata */
 	fprintf(f, "<Table Name=\"%s\">\n", table->name);
 	for(c = 0; c < table->n_columns; c++)
-		fprintf(f, "\t<Column Name=\"%s:%s\" Type=\"%s\"/>\n", short_name, table->columns[c].name, ligolw_table_type_enum_to_name(table->columns[c].type));
+		fprintf(f, "\t<Column Name=\"%s:%s\" Type=\"%s\"/>\n", short_name, table->columns[c].name, ligolw_type_enum_to_name(table->columns[c].type));
 	fprintf(f, "\t<Stream Name=\"%s\" Type=\"Local\" Delimiter=\"%c\">\n", table->name, table->delimiter);
 
 	/* print the rows */

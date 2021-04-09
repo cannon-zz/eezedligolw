@@ -24,6 +24,24 @@
 #include <libezligolw/ezxml.h>
 
 
+enum ligolw_cell_type {
+	ligolw_cell_type_char_s,
+	ligolw_cell_type_char_v,
+	ligolw_cell_type_ilwdchar,
+	ligolw_cell_type_ilwdchar_u,
+	ligolw_cell_type_blob,
+	ligolw_cell_type_lstring,
+	ligolw_cell_type_int_2s,
+	ligolw_cell_type_int_2u,
+	ligolw_cell_type_int_4s,
+	ligolw_cell_type_int_4u,
+	ligolw_cell_type_int_8s,
+	ligolw_cell_type_int_8u,
+	ligolw_cell_type_real_4,
+	ligolw_cell_type_real_8
+};
+
+
 struct ligolw_table {
 	const char *name;
 	char delimiter;
@@ -31,22 +49,7 @@ struct ligolw_table {
 	struct ligolw_table_column {
 		const char *name;
 		struct ligolw_table *table;
-		enum ligolw_table_cell_type {
-			ligolw_cell_type_char_s,
-			ligolw_cell_type_char_v,
-			ligolw_cell_type_ilwdchar,
-			ligolw_cell_type_ilwdchar_u,
-			ligolw_cell_type_blob,
-			ligolw_cell_type_lstring,
-			ligolw_cell_type_int_2s,
-			ligolw_cell_type_int_2u,
-			ligolw_cell_type_int_4s,
-			ligolw_cell_type_int_4u,
-			ligolw_cell_type_int_8s,
-			ligolw_cell_type_int_8u,
-			ligolw_cell_type_real_4,
-			ligolw_cell_type_real_8
-		} type;
+		enum ligolw_cell_type type;
 	} *columns;
 	int n_rows;
 	struct ligolw_table_row {
@@ -63,13 +66,14 @@ struct ligolw_table {
 };
 
 
+const char *ligolw_strip_name(const char *, const char *);
 ezxml_t ligolw_table_get(ezxml_t, const char *);
-enum ligolw_table_cell_type ligolw_table_type_name_to_enum(const char *);
-const char *ligolw_table_type_enum_to_name(enum ligolw_table_cell_type);
+enum ligolw_cell_type ligolw_type_name_to_enum(const char *);
+const char *ligolw_type_enum_to_name(enum ligolw_cell_type);
 int ligolw_table_default_row_callback(struct ligolw_table *, struct ligolw_table_row, void *);
 struct ligolw_table *ligolw_table_parse(ezxml_t, int (*)(struct ligolw_table *, struct ligolw_table_row, void *), void *);
 void ligolw_table_free(struct ligolw_table *);
-int ligolw_table_get_column(struct ligolw_table *, const char *, enum ligolw_table_cell_type *);
+int ligolw_table_get_column(struct ligolw_table *, const char *, enum ligolw_cell_type *);
 int ligolw_table_print(FILE *, struct ligolw_table *);
 
 
@@ -85,7 +89,7 @@ static union ligolw_table_cell ligolw_row_get_cell(struct ligolw_table_row row, 
 struct ligolw_unpacking_spec {
 	void *dest;
 	const char *name;
-	enum ligolw_table_cell_type type;
+	enum ligolw_cell_type type;
 	int flags;
 };
 
