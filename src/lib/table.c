@@ -314,7 +314,7 @@ int ligolw_unpacking_row_builder(struct ligolw_table *table, struct ligolw_table
 			break;
 
 		case ligolw_cell_type_int_2u:
-			*(int16_t *) spec->dest = row.cells[c].as_uint;
+			*(uint16_t *) spec->dest = row.cells[c].as_uint;
 			break;
 
 		case ligolw_cell_type_int_4s:
