@@ -106,6 +106,7 @@ struct ligolw_table *ligolw_table_parse(ezxml_t elem, int (row_callback)(struct 
 
 	table->name = ligolw_strip_table_name(ezxml_attr(elem, "Name"));
 
+	table->delimiter = '\0';
 	table->n_columns = 0;
 	table->columns = NULL;
 	table->n_rows = 0;
@@ -124,7 +125,6 @@ struct ligolw_table *ligolw_table_parse(ezxml_t elem, int (row_callback)(struct 
 	stream = ezxml_child(elem, "Stream");
 	if(!stream) {
 		/* DTD allows Table to have 0 Stream children */
-		table->delimiter = '\0';
 		return table;
 	}
 
