@@ -19,6 +19,7 @@
  */
 
 
+#include <complex.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <libezligolw/ezxml.h>
@@ -38,7 +39,10 @@ enum ligolw_cell_type {
 	ligolw_cell_type_int_8s,
 	ligolw_cell_type_int_8u,
 	ligolw_cell_type_real_4,
-	ligolw_cell_type_real_8
+	ligolw_cell_type_real_8,
+	ligolw_cell_type_complex_8,
+	ligolw_cell_type_complex_16
+};
 };
 
 
@@ -59,6 +63,8 @@ struct ligolw_table {
 			uint64_t as_uint;
 			float as_float;
 			double as_double;
+			float complex as_float_complex;
+			double complex as_double_complex;
 			const char *as_string;
 			const unsigned char *as_blob;
 		} *cells;

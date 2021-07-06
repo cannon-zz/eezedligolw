@@ -19,6 +19,7 @@
  */
 
 
+#include <complex.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -179,6 +180,26 @@ struct ligolw_table *ligolw_table_parse(ezxml_t elem, int (row_callback)(struct 
 			case ligolw_cell_type_real_8:
 				row.cells[c].as_double = strtod(txt, NULL);
 				break;
+
+			case ligolw_cell_type_complex_8: {
+				float re, im;
+				re = strtof(txt, &txt);
+				/* skip "+i" */
+				txt += 2;
+				im = strtof(txt, NULL);
+				row.cells[c].as_float_complex = re + im * I;
+				break;
+			}
+
+			case ligolw_cell_type_complex_16: {
+				double re, im;
+				re = strtod(txt, &txt);
+				/* skip "+i" */
+				txt += 2;
+				im = strtod(txt, NULL);
+				row.cells[c].as_double_complex = re + im * I;
+				break;
+			}
 			}
 
 			/* null-terminate current token.  this does not
@@ -340,6 +361,14 @@ int ligolw_unpacking_row_builder(struct ligolw_table *table, struct ligolw_table
 		case ligolw_cell_type_real_8:
 			*(double *) spec->dest = row.cells[c].as_double;
 			break;
+
+		case ligolw_cell_type_complex_8:
+			*(float complex *) spec->dest = row.cells[c].as_float_complex;
+			break;
+
+		case ligolw_cell_type_complex_16:
+			*(double complex *) spec->dest = row.cells[c].as_double_complex;
+			break;
 		}
 	}
 
@@ -425,6 +454,18 @@ int ligolw_table_print(FILE *f, struct ligolw_table *table)
 			case ligolw_cell_type_real_8:
 				fprintf(f, "%.16g", table->rows[r].cells[c].as_double);
 				break;
+
+			case ligolw_cell_type_complex_8: {
+				double complex x = table->rows[r].cells[c].as_float_complex;
+				fprintf(f, "%.7g+i%.7g", creal(x), cimag(x));
+				break;
+			}
+
+			case ligolw_cell_type_complex_16: {
+				double complex x = table->rows[r].cells[c].as_double_complex;
+				fprintf(f, "%.16g+i%.16g", creal(x), cimag(x));
+				break;
+			}
 			}
 		}
 	}

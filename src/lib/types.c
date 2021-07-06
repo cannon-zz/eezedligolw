@@ -50,6 +50,8 @@ static const struct name_to_enum {
 	{"float", ligolw_cell_type_real_4},
 	{"real_8", ligolw_cell_type_real_8},
 	{"double", ligolw_cell_type_real_8},
+	{"complex_8", ligolw_cell_type_complex_8},
+	{"complex_16", ligolw_cell_type_complex_16},
 	{NULL, -1}
 };
 
