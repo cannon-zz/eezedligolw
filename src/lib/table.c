@@ -173,7 +173,7 @@ struct ligolw_table *ligolw_table_parse(ezxml_t elem, int (row_callback)(struct 
 				break;
 
 			case ligolw_cell_type_real_4:
-				row.cells[c].as_float = strtod(txt, NULL);
+				row.cells[c].as_float = strtof(txt, NULL);
 				break;
 
 			case ligolw_cell_type_real_8:
