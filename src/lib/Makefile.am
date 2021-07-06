@@ -3,6 +3,7 @@ AM_CPPFLAGS = -I../include
 lib_LTLIBRARIES = libezligolw.la
 
 libezligolw_la_SOURCES = \
+	array.c \
 	ligolw.c \
 	table.c \
 	tokenizer.h \

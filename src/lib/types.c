@@ -82,3 +82,36 @@ const char *ligolw_type_enum_to_name(enum ligolw_cell_type t)
 	/* unrecognized type */
 	return NULL;
 }
+
+
+size_t ligolw_type_enum_to_size(enum ligolw_cell_type t)
+{
+	switch(t) {
+	case ligolw_cell_type_char_s:
+	case ligolw_cell_type_char_v:
+	case ligolw_cell_type_ilwdchar:
+	case ligolw_cell_type_ilwdchar_u:
+	case ligolw_cell_type_lstring:
+	default:
+		/* size not defined */
+		return -1;
+
+	case ligolw_cell_type_int_2s:
+	case ligolw_cell_type_int_2u:
+		return 2;
+
+	case ligolw_cell_type_int_4s:
+	case ligolw_cell_type_int_4u:
+	case ligolw_cell_type_real_4:
+		return 4;
+
+	case ligolw_cell_type_int_8s:
+	case ligolw_cell_type_int_8u:
+	case ligolw_cell_type_real_8:
+	case ligolw_cell_type_complex_8:
+		return 8;
+
+	case ligolw_cell_type_complex_16:
+		return 16;
+	}
+}

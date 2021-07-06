@@ -43,6 +43,21 @@ enum ligolw_cell_type {
 	ligolw_cell_type_complex_8,
 	ligolw_cell_type_complex_16
 };
+
+
+struct ligolw_array {
+	const char *name;
+	enum ligolw_cell_type type;
+	char delimiter;
+	int n_dims;
+	struct ligolw_array_dim {
+		int n;	/* must be first so a Dim can be type cast to int */
+		const char *name;
+		const char *unit;
+		const char *start;
+		const char *scale;
+	} *dims;
+	void *data;
 };
 
 
@@ -73,10 +88,16 @@ struct ligolw_table {
 
 
 const char *ligolw_strip_name(const char *, const char *);
-ezxml_t ligolw_table_get(ezxml_t, const char *);
 enum ligolw_cell_type ligolw_type_name_to_enum(const char *);
 const char *ligolw_type_enum_to_name(enum ligolw_cell_type);
+size_t ligolw_type_enum_to_size(enum ligolw_cell_type);
+
+ezxml_t ligolw_array_get(ezxml_t, const char *);
+struct ligolw_array *ligolw_array_parse(ezxml_t);
+void ligolw_array_free(struct ligolw_array *);
+
 int ligolw_table_default_row_callback(struct ligolw_table *, struct ligolw_table_row, void *);
+ezxml_t ligolw_table_get(ezxml_t, const char *);
 struct ligolw_table *ligolw_table_parse(ezxml_t, int (*)(struct ligolw_table *, struct ligolw_table_row, void *), void *);
 void ligolw_table_free(struct ligolw_table *);
 int ligolw_table_get_column(struct ligolw_table *, const char *, enum ligolw_cell_type *);
