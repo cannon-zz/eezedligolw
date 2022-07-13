@@ -110,14 +110,17 @@ static union ligolw_table_cell ligolw_row_get_cell(struct ligolw_table_row row, 
 }
 
 
-#define LIGOLW_UNPACKING_REQUIRED 0x1
+enum ligolw_column_flags {
+	LIGOLW_COLUMN_FLAGS_NONE	= 0x00,
+	LIGOLW_COLUMN_FLAGS_REQUIRED	= 0x01,
+};
 
 
 struct ligolw_unpacking_spec {
 	void *dest;
 	const char *name;
 	enum ligolw_cell_type type;
-	int flags;
+	enum ligolw_column_flags flags;
 };
 
 int ligolw_unpacking_row_builder(struct ligolw_table *, struct ligolw_table_row, void *);

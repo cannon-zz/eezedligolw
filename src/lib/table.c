@@ -291,7 +291,7 @@ int ligolw_unpacking_row_builder(struct ligolw_table *table, struct ligolw_table
 		int c = ligolw_table_get_column(table, spec->name, &type);
 		if(c < 0) {
 			/* no column by that name */
-			if(!(spec->flags & LIGOLW_UNPACKING_REQUIRED))
+			if(!(spec->flags & LIGOLW_COLUMN_FLAGS_REQUIRED))
 				/* not required */
 				continue;
 			free(row.cells);
