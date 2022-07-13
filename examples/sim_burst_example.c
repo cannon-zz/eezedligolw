@@ -73,10 +73,7 @@ static int sim_burst_row_callback(struct ligolw_table *table, struct ligolw_tabl
 
 	/* unpack.  have to do the strings manually because they get copied
 	 * by value rather than reference.  ligolw_unpacking_row_builder()
-	 * cleans up row's memory for us. */
-	strncpy(new->waveform, ligolw_row_get_cell(row, "waveform").as_string, LIGOMETA_WAVEFORM_MAX - 1);
-	new->waveform[LIGOMETA_WAVEFORM_MAX-1] = '\0';
-
+	 * cleans up row's memory for us if it fails. */
 	result_code = ligolw_unpacking_row_builder(table, row, sim_burst_spec);
 	if(result_code > 0) {
 		/* missing required column */
@@ -89,6 +86,10 @@ static int sim_burst_row_callback(struct ligolw_table *table, struct ligolw_tabl
 		free(new);
 		return -1;
 	}
+	/* do this after ligolw_unpacking_row_builder() to let it confirm
+	 * the column is present and has the correct type */
+	strncpy(new->waveform, ligolw_row_get_cell(row, "waveform").as_string, LIGOMETA_WAVEFORM_MAX - 1);
+	new->waveform[LIGOMETA_WAVEFORM_MAX-1] = '\0';
 
 	/* add new sim to head of linked list.  yes, this means the table's
 	 * rows get reversed.  so what. */
