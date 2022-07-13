@@ -20,6 +20,7 @@
 
 
 #include <lal/LIGOLwXML.h>
+#include <lal/LIGOMetadataUtils.h>
 #include <lal/SnglBurstUtils.h>
 #include <lal/XLALError.h>
 #include <libezligolw/ezligolw.h>
