@@ -414,7 +414,7 @@ int ligolw_table_print(FILE *f, struct ligolw_table *table)
 	/* print the rows */
 	for(r = 0; r < table->n_rows; r++) {
 		if(r)
-			fprintf(f, ",\n\t\t");
+			fprintf(f, "%c\n\t\t", table->delimiter);
 		else
 			fprintf(f, "\t\t");
 		for(c = 0; c < table->n_columns; c++) {
