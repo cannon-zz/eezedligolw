@@ -26,7 +26,7 @@ AC_SUBST([pkgconfigdir],[${libdir}/pkgconfig])
 
 # Checks for programs
 AC_PROG_CC
-AC_PROG_LIBTOOL
+LT_INIT
 AX_CFLAGS_WARN_ALL
 
 # Check for zlib library
