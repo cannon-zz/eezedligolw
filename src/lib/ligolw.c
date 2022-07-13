@@ -34,16 +34,25 @@
 
 const char *ligolw_strip_name(const char *Name, const char *suffix)
 {
+	if(!Name)
+		return NULL;
+
 	char buff[strlen(Name) + 1];
-	int n = strlen(suffix);
 	char *pos = buff;
 	char *start;
 
 	strcpy(buff, Name);
 
-	do
-		start = strsep(&pos, ":");
-	while(pos && strncmp(pos, suffix, n));
+	if(suffix) {
+		int n = strlen(suffix);
+		do
+			start = strsep(&pos, ":");
+		while(pos && strncmp(pos, suffix, n));
+	} else {
+		do
+			start = strsep(&pos, ":");
+		while(pos);
+	}
 
 	return Name + (start - buff);
 }

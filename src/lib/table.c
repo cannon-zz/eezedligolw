@@ -47,17 +47,7 @@ static const char *ligolw_strip_table_name(const char *Name)
 
 static const char *ligolw_strip_column_name(const char *Name)
 {
-	char buff[strlen(Name) + 1];
-	char *pos = buff;
-	char *start;
-
-	strcpy(buff, Name);
-
-	do
-		start = strsep(&pos, ":");
-	while(pos);
-
-	return Name + (start - buff);
+	return ligolw_strip_name(Name, NULL);
 }
 
 
