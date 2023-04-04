@@ -320,6 +320,7 @@ short ezxml_internal_dtd(ezxml_root_t root, char *s, size_t len)
 {
     char q, *c, *t, *n = NULL, *v, **ent, **pe;
     int i, j;
+    size_t n_len, n_off;
     
     pe = memcpy(malloc(sizeof(EZXML_NIL)), EZXML_NIL, sizeof(EZXML_NIL));
 
@@ -330,7 +331,13 @@ short ezxml_internal_dtd(ezxml_root_t root, char *s, size_t len)
         else if (! strncmp(s, "<!ENTITY", 8)) { // parse entity definitions
             c = s += strspn(s + 8, EZXML_WS) + 8; // skip white space separator
             n = s + strspn(s, EZXML_WS "%"); // find name
-            *(s = n + strcspn(n, EZXML_WS)) = ';'; // append ; to name
+            n_len = strlen(n);
+            n_off = strcspn(n, EZXML_WS);
+            if(n_off >= n_len) {
+                ezxml_err(root, NULL, "write past buffer (<!ENTITY)");
+                break;
+            }
+            *(s = n + n_off) = ';'; // append ; to name
 
             v = s + strspn(s + 1, EZXML_WS) + 1; // find value
             if ((q = *(v++)) != '"' && q != '\'') { // skip externals
