@@ -76,9 +76,7 @@ struct ligolw_table {
 		union ligolw_table_cell {
 			int64_t as_int;
 			uint64_t as_uint;
-			float as_float;
 			double as_double;
-			float complex as_float_complex;
 			double complex as_double_complex;
 			const char *as_string;
 			const unsigned char *as_blob;

@@ -176,23 +176,11 @@ struct ligolw_table *ligolw_table_parse(ezxml_t elem, int (row_callback)(struct 
 				break;
 
 			case ligolw_cell_type_real_4:
-				row.cells[c].as_float = strtof(txt, NULL);
-				break;
-
 			case ligolw_cell_type_real_8:
 				row.cells[c].as_double = strtod(txt, NULL);
 				break;
 
-			case ligolw_cell_type_complex_8: {
-				float re, im;
-				re = strtof(txt, &txt);
-				/* skip "+i" */
-				txt += 2;
-				im = strtof(txt, NULL);
-				row.cells[c].as_float_complex = re + im * I;
-				break;
-			}
-
+			case ligolw_cell_type_complex_8:
 			case ligolw_cell_type_complex_16: {
 				double re, im;
 				re = strtod(txt, &txt);
@@ -357,7 +345,7 @@ int ligolw_unpacking_row_builder(struct ligolw_table *table, struct ligolw_table
 			break;
 
 		case ligolw_cell_type_real_4:
-			*(float *) spec->dest = row.cells[c].as_float;
+			*(float *) spec->dest = row.cells[c].as_double;
 			break;
 
 		case ligolw_cell_type_real_8:
@@ -365,7 +353,7 @@ int ligolw_unpacking_row_builder(struct ligolw_table *table, struct ligolw_table
 			break;
 
 		case ligolw_cell_type_complex_8:
-			*(float complex *) spec->dest = row.cells[c].as_float_complex;
+			*(float complex *) spec->dest = row.cells[c].as_double_complex;
 			break;
 
 		case ligolw_cell_type_complex_16:
@@ -450,7 +438,7 @@ int ligolw_table_print(FILE *f, struct ligolw_table *table)
 				break;
 
 			case ligolw_cell_type_real_4:
-				fprintf(f, "%.7g", (double) table->rows[r].cells[c].as_float);
+				fprintf(f, "%.7g", table->rows[r].cells[c].as_double);
 				break;
 
 			case ligolw_cell_type_real_8:
@@ -458,7 +446,7 @@ int ligolw_table_print(FILE *f, struct ligolw_table *table)
 				break;
 
 			case ligolw_cell_type_complex_8: {
-				double complex x = table->rows[r].cells[c].as_float_complex;
+				double complex x = table->rows[r].cells[c].as_double_complex;
 				fprintf(f, "%.7g+i%.7g", creal(x), cimag(x));
 				break;
 			}
