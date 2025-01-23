@@ -102,12 +102,7 @@ struct ligolw_table *ligolw_table_parse(ezxml_t, int (*)(struct ligolw_table *, 
 void ligolw_table_free(struct ligolw_table *);
 int ligolw_table_get_column(struct ligolw_table *, const char *, enum ligolw_cell_type *);
 int ligolw_table_print(FILE *, struct ligolw_table *);
-
-
-static union ligolw_table_cell ligolw_row_get_cell(struct ligolw_table_row row, const char *name)
-{
-	return row.cells[ligolw_table_get_column(row.table, name, NULL)];
-}
+union ligolw_table_cell ligolw_row_get_cell(const struct ligolw_table_row *, const char *);
 
 
 struct ligolw_unpacking_spec {

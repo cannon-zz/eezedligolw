@@ -66,6 +66,18 @@ int ligolw_table_default_row_callback(struct ligolw_table *table, struct ligolw_
 
 
 /*
+ * retrieve the ligolw_table_cell corresponding to the named column from a
+ * row.
+ */
+
+
+union ligolw_table_cell ligolw_row_get_cell(const struct ligolw_table_row *row, const char *name)
+{
+	return row->cells[ligolw_table_get_column(row->table, name, NULL)];
+}
+
+
+/*
  * Parse an ezxml_t Table element into a struct ligolw_table structure.  If
  * row_callback() is NULL, then the default row builder is used, which
  * inserts the rows into the ligolw_table structure.  Calling code can
