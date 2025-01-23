@@ -1,6 +1,4 @@
 /*
- * $Id: ezligolw.c,v 1.4 2008/07/31 08:28:42 kipp Exp $
- *
  * Copyright (C) 2007  Kipp Cannon
  *
  * This program is free software; you can redistribute it and/or modify it
