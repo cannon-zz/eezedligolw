@@ -205,7 +205,7 @@ ezxml_t ligolw_array_get(ezxml_t xmldoc, const char *name)
 	int n = strlen(name);
 	ezxml_t elem;
 
-	for(elem = ezxml_child(xmldoc, "Table"); elem; elem = elem->next)
+	for(elem = ezxml_child(xmldoc, "Array"); elem; elem = elem->next)
 		if(!strncmp(ligolw_strip_array_name(ezxml_attr(elem, "Name")), name, n))
 			break;
 
