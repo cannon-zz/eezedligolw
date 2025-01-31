@@ -6,6 +6,7 @@ libezligolw_la_SOURCES = \
 	array.c \
 	ligolw.c \
 	table.c \
+	time.c \
 	tokenizer.h \
 	tokenizer.c \
 	types.c \
