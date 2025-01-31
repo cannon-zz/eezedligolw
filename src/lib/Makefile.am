@@ -5,6 +5,7 @@ lib_LTLIBRARIES = libezligolw.la
 libezligolw_la_SOURCES = \
 	array.c \
 	ligolw.c \
+	param.c \
 	table.c \
 	time.c \
 	tokenizer.h \
