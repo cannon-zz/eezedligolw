@@ -24,7 +24,8 @@
 /*
  * Parse an ezxml_t Time element.  Sets type to the address of a string
  * containing the type's type, and returns the address of the text contents
- * of the element.
+ * of the element.  Neither are owned by the calling code, they must not be
+ * free()'ed.
  */
 
 
