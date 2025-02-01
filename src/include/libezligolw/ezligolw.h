@@ -42,6 +42,15 @@ enum ligolw_cell_type {
 	ligolw_cell_type_complex_16
 };
 
+union ligolw_cell {
+	int64_t as_int;
+	uint64_t as_uint;
+	double as_double;
+	double complex as_double_complex;
+	const char *as_string;
+	const unsigned char *as_blob;
+};
+
 
 struct ligolw_array {
 	const char *name;
@@ -71,14 +80,7 @@ struct ligolw_table {
 	int n_rows;
 	struct ligolw_table_row {
 		struct ligolw_table *table;
-		union ligolw_table_cell {
-			int64_t as_int;
-			uint64_t as_uint;
-			double as_double;
-			double complex as_double_complex;
-			const char *as_string;
-			const unsigned char *as_blob;
-		} *cells;
+		union ligolw_cell *cells;
 	} *rows;
 };
 
@@ -98,7 +100,7 @@ struct ligolw_table *ligolw_table_parse(ezxml_t, int (*)(struct ligolw_table *, 
 void ligolw_table_free(struct ligolw_table *);
 int ligolw_table_get_column(struct ligolw_table *, const char *, enum ligolw_cell_type *);
 int ligolw_table_print(FILE *, struct ligolw_table *);
-union ligolw_table_cell ligolw_row_get_cell(const struct ligolw_table_row *, const char *);
+union ligolw_cell ligolw_row_get_cell(const struct ligolw_table_row *, const char *);
 
 
 struct ligolw_unpacking_spec {
