@@ -89,6 +89,7 @@ const char *ligolw_strip_name(const char *, const char *);
 enum ligolw_cell_type ligolw_type_name_to_enum(const char *);
 const char *ligolw_type_enum_to_name(enum ligolw_cell_type);
 size_t ligolw_type_enum_to_size(enum ligolw_cell_type);
+union ligolw_cell *ligolw_cell_from_txt(union ligolw_cell *, enum ligolw_cell_type, char *);
 
 ezxml_t ligolw_array_get(ezxml_t, const char *);
 struct ligolw_array *ligolw_array_parse(ezxml_t);
@@ -118,5 +119,5 @@ int ligolw_unpacking_row_builder(struct ligolw_table *, struct ligolw_table_row,
 const char *ligolw_time_parse(ezxml_t, const char **);
 ezxml_t ligolw_time_get(ezxml_t, const char *);
 
-const char *ligolw_param_parse(ezxml_t, const char **);
+union ligolw_cell ligolw_param_parse(ezxml_t, enum ligolw_cell_type *);
 ezxml_t ligolw_param_get(ezxml_t, const char *);

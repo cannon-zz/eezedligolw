@@ -113,3 +113,64 @@ size_t ligolw_type_enum_to_size(enum ligolw_cell_type t)
 		return 16;
 	}
 }
+
+
+/*
+ * populates a union ligolw_cell object by parsing the text contents of an
+ * ezxml_t element as the given type.  returns the address of the union
+ * ligolw_cell object on succes, NULL on error.
+ */
+
+
+union ligolw_cell *ligolw_cell_from_txt(union ligolw_cell *cell, enum ligolw_cell_type type, char *txt)
+{
+	/* FIXME:  implement error checking */
+	switch(type) {
+	case ligolw_cell_type_char_s:
+	case ligolw_cell_type_char_v:
+	case ligolw_cell_type_ilwdchar:
+	case ligolw_cell_type_ilwdchar_u:
+	case ligolw_cell_type_blob:
+	case ligolw_cell_type_lstring:
+		/* FIXME: move into a separate buffer so
+		 * that the original document is not
+		 * modified (see null terminator below) */
+		/* FIXME: binary types need to be sent
+		 * through a decoder following this */
+		cell->as_string = txt;
+		break;
+
+	case ligolw_cell_type_int_2s:
+	case ligolw_cell_type_int_4s:
+	case ligolw_cell_type_int_8s:
+		cell->as_int = strtoll(txt, NULL, 0);
+		break;
+
+	case ligolw_cell_type_int_2u:
+	case ligolw_cell_type_int_4u:
+	case ligolw_cell_type_int_8u:
+		cell->as_uint = strtoull(txt, NULL, 0);
+		break;
+
+	case ligolw_cell_type_real_4:
+	case ligolw_cell_type_real_8:
+		cell->as_double = strtod(txt, NULL);
+		break;
+
+	case ligolw_cell_type_complex_8:
+	case ligolw_cell_type_complex_16: {
+		double re, im;
+		re = strtod(txt, &txt);
+		/* skip "+i" */
+		txt += 2;
+		im = strtod(txt, NULL);
+		cell->as_double_complex = re + im * I;
+		break;
+	}
+	default:
+		/* unrecognized type enum */
+		return NULL;
+	}
+
+	return cell;
+}

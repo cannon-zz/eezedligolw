@@ -145,49 +145,7 @@ struct ligolw_table *ligolw_table_parse(ezxml_t elem, int (row_callback)(struct 
 
 			ligolw_next_token(&txt, &end, &next, table->delimiter);
 
-			switch(table->columns[c].type) {
-			case ligolw_cell_type_char_s:
-			case ligolw_cell_type_char_v:
-			case ligolw_cell_type_ilwdchar:
-			case ligolw_cell_type_ilwdchar_u:
-			case ligolw_cell_type_blob:
-			case ligolw_cell_type_lstring:
-				/* FIXME: move into a separate buffer so
-				 * that the original document is not
-				 * modified (see null terminator below) */
-				/* FIXME: binary types need to be sent
-				 * through a decoder following this */
-				row.cells[c].as_string = txt;
-				break;
-
-			case ligolw_cell_type_int_2s:
-			case ligolw_cell_type_int_4s:
-			case ligolw_cell_type_int_8s:
-				row.cells[c].as_int = strtoll(txt, NULL, 0);
-				break;
-
-			case ligolw_cell_type_int_2u:
-			case ligolw_cell_type_int_4u:
-			case ligolw_cell_type_int_8u:
-				row.cells[c].as_uint = strtoull(txt, NULL, 0);
-				break;
-
-			case ligolw_cell_type_real_4:
-			case ligolw_cell_type_real_8:
-				row.cells[c].as_double = strtod(txt, NULL);
-				break;
-
-			case ligolw_cell_type_complex_8:
-			case ligolw_cell_type_complex_16: {
-				double re, im;
-				re = strtod(txt, &txt);
-				/* skip "+i" */
-				txt += 2;
-				im = strtod(txt, NULL);
-				row.cells[c].as_double_complex = re + im * I;
-				break;
-			}
-			}
+			ligolw_cell_from_txt(&(row.cells[c]), table->columns[c].type, txt);
 
 			/* null-terminate current token.  this does not
 			 * interfer with the exit test for the loop over

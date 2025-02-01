@@ -26,10 +26,14 @@
  */
 
 
-const char *ligolw_param_parse(ezxml_t elem, const char **type)
+union ligolw_cell ligolw_param_parse(ezxml_t elem, enum ligolw_cell_type *type)
 {
-	*type = ezxml_attr(elem, "Type");
-	return elem->txt;
+	union ligolw_cell value;
+
+	*type = ligolw_type_name_to_enum(ezxml_attr(elem, "Type"));
+	ligolw_cell_from_txt(&value, *type, elem->txt);
+
+	return value;
 }
 
 
