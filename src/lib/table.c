@@ -319,14 +319,6 @@ int ligolw_unpacking_row_builder(struct ligolw_table *table, struct ligolw_table
 
 	free(row.cells);
 
-	if(spec - (struct ligolw_unpacking_spec *) data != table->n_columns) {
-		/* table has more columns than allowed */
-		/* FIXME:  if this is an error, return an error code */
-		/* FIXME:  this test doesn't work if the same column gets
-		 * unpacked into more than one location, which the design
-		 * of the loop above would allow */
-	}
-
 	return 0;
 }
 
