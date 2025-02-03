@@ -5,9 +5,8 @@ then written back to disk using the old LAL routines, thereby demonstrating
 a round-trip disk --> LAL --> disk via ezxml.
 
 To run it, type "make", and you should get a program in examples/ named
-sim_burst_example.  Run that, with no arguments.  While running it, note
-the time required to parse and rewrite a 1/4 million row file, and compare
-that to LAL's performance.
+sim_burst_example.  Run that, with no arguments.  It reads the .xml file in
+that directory, extracts the sim_burst table, and writes it to a new file.
 
 ezxml reads the entire document into memory as a string, which poses a
 potential scaling problem, but also makes it trivial to use it with gzipped
