@@ -26,6 +26,37 @@
 
 
 /*
+ * check that a type is a numeric type
+ */
+
+
+static int ligolw_cell_type_is_numeric(enum ligolw_cell_type type)
+{
+	static const enum ligolw_cell_type numeric_types[] = {
+		ligolw_cell_type_int_2s,
+		ligolw_cell_type_int_2u,
+		ligolw_cell_type_int_4s,
+		ligolw_cell_type_int_4s,
+		ligolw_cell_type_int_4u,
+		ligolw_cell_type_int_8s,
+		ligolw_cell_type_int_8u,
+		ligolw_cell_type_real_4,
+		ligolw_cell_type_real_8,
+		ligolw_cell_type_complex_8,
+		ligolw_cell_type_complex_16
+	};
+	int i;
+
+	for(i = 0; i < sizeof(numeric_types) / sizeof(*numeric_types) ; i++)
+		if(type == numeric_types[i])
+			/* found it */
+			return 1;
+	/* didn't find it */
+	return 0;
+}
+
+
+/*
  * Extract the meaningful portion of an Array name.  Returns a pointer to
  * the last colon-delimited substring before an optional ":array" suffix.
  */
@@ -75,6 +106,12 @@ struct ligolw_array *ligolw_array_parse(ezxml_t elem)
 	array->n_dims = 0;
 	array->dims = NULL;
 	array->data = NULL;
+
+	if(!ligolw_cell_type_is_numeric(array->type)) {
+		/* non-numeric types not supported */
+		free(array);
+		return NULL;
+	}
 
 	for(n = 1, dim = ezxml_child(elem, "Dim"); dim; dim = dim->next) {
 		array->dims = realloc(array->dims, (array->n_dims + 1) * sizeof(*array->dims));
