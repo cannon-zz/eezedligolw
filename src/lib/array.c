@@ -94,6 +94,7 @@ struct ligolw_array *ligolw_array_parse(ezxml_t elem)
 	char *txt;
 	ezxml_t dim;
 	ezxml_t stream;
+	char *data;
 	int stride;
 	int n;
 
@@ -144,7 +145,7 @@ struct ligolw_array *ligolw_array_parse(ezxml_t elem)
 
 	array->delimiter = *ezxml_attr(stream, "Delimiter");
 
-	for(n = 0, txt = stream->txt; txt && *txt; n++) {
+	for(data = array->data, txt = stream->txt; txt && *txt; data += stride) {
 		union ligolw_cell cell;
 		char *end, *next;
 
@@ -153,7 +154,7 @@ struct ligolw_array *ligolw_array_parse(ezxml_t elem)
 		/* we have confirmed above that array->type is a numeric
 		 * type, so we know the _to_c() function will do the
 		 * correct thing */
-		if(!ligolw_cell_from_txt(&cell, array->type, txt) || ligolw_cell_to_c(&cell, array->type, (char *) array->data + n * stride)) {
+		if(!ligolw_cell_from_txt(&cell, array->type, txt) || ligolw_cell_to_c(&cell, array->type, data)) {
 			free(array->data);
 			free(array->dims);
 			free(array);
