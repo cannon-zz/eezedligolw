@@ -88,7 +88,7 @@ static int sim_burst_row_callback(struct ligolw_table *table, struct ligolw_tabl
 	}
 	/* do this after ligolw_unpacking_row_builder() to let it confirm
 	 * the column is present and has the correct type */
-	strncpy(new->waveform, ligolw_row_get_cell(row, "waveform").as_string, LIGOMETA_WAVEFORM_MAX - 1);
+	strncpy(new->waveform, ligolw_row_get_cell(&row, "waveform", NULL).as_string, LIGOMETA_WAVEFORM_MAX - 1);
 	new->waveform[LIGOMETA_WAVEFORM_MAX-1] = '\0';
 
 	/* add new sim to head of linked list.  yes, this means the table's
