@@ -94,6 +94,7 @@ struct ligolw_array *ligolw_array_parse(ezxml_t elem)
 	char *txt;
 	ezxml_t dim;
 	ezxml_t stream;
+	int stride;
 	int n;
 
 	array = malloc(sizeof(*array));
@@ -133,7 +134,8 @@ struct ligolw_array *ligolw_array_parse(ezxml_t elem)
 		return array;
 	}
 
-	array->data = malloc(n * ligolw_type_enum_to_size(array->type));
+	stride = ligolw_type_enum_to_size(array->type);
+	array->data = malloc(n * stride);
 	if(!array->data) {
 		free(array->dims);
 		free(array);
@@ -143,65 +145,15 @@ struct ligolw_array *ligolw_array_parse(ezxml_t elem)
 	array->delimiter = *ezxml_attr(stream, "Delimiter");
 
 	for(n = 0, txt = stream->txt; txt && *txt; n++) {
+		union ligolw_cell cell;
 		char *end, *next;
 
 		ligolw_next_token(&txt, &end, &next, array->delimiter);
 
-		switch(array->type) {
-		case ligolw_cell_type_int_2s:
-			((int16_t *) array->data)[n] = strtoll(txt, NULL, 0);
-			break;
-
-		case ligolw_cell_type_int_2u:
-			((uint16_t *) array->data)[n] = strtoull(txt, NULL, 0);
-			break;
-
-		case ligolw_cell_type_int_4s:
-			((int32_t *) array->data)[n] = strtoll(txt, NULL, 0);
-			break;
-
-		case ligolw_cell_type_int_4u:
-			((uint32_t *) array->data)[n] = strtoull(txt, NULL, 0);
-			break;
-
-		case ligolw_cell_type_int_8s:
-			((int64_t *) array->data)[n] = strtoll(txt, NULL, 0);
-			break;
-
-		case ligolw_cell_type_int_8u:
-			((uint64_t *) array->data)[n] = strtoull(txt, NULL, 0);
-			break;
-
-		case ligolw_cell_type_real_4:
-			((float *) array->data)[n] = strtof(txt, NULL);
-			break;
-
-		case ligolw_cell_type_real_8:
-			((double *) array->data)[n] = strtod(txt, NULL);
-			break;
-
-		case ligolw_cell_type_complex_8: {
-			float re, im;
-			re = strtof(txt, &txt);
-			/* skip "+i" */
-			txt += 2;
-			im = strtof(txt, NULL);
-			((float complex *) array->data)[n] = re + im * I;
-			break;
-		}
-
-		case ligolw_cell_type_complex_16: {
-			double re, im;
-			re = strtod(txt, &txt);
-			/* skip "+i" */
-			txt += 2;
-			im = strtod(txt, NULL);
-			((double complex *) array->data)[n] = re + im * I;
-			break;
-		}
-
-		default:
-			/* non-numeric types not supported */
+		/* we have confirmed above that array->type is a numeric
+		 * type, so we know the _to_c() function will do the
+		 * correct thing */
+		if(!ligolw_cell_from_txt(&cell, array->type, txt) || ligolw_cell_to_c(&cell, array->type, (char *) array->data + n * stride)) {
 			free(array->data);
 			free(array->dims);
 			free(array);
