@@ -152,8 +152,11 @@ struct ligolw_array *ligolw_array_parse(ezxml_t elem)
 		ligolw_next_token(&txt, &end, &next, array->delimiter);
 
 		/* we have confirmed above that array->type is a numeric
-		 * type, so we know the _to_c() function will do the
-		 * correct thing */
+		 * type, so we don't need to bother null-terminating the
+		 * token before calling _cell_from_txt because parsing will
+		 * automatically stop at the end of the nuber, and also we
+		 * know the _to_c() function will not do something weird to
+		 * the contents of the array. */
 		if(!ligolw_cell_from_txt(&cell, array->type, txt) || ligolw_cell_to_c(&cell, array->type, data)) {
 			free(array->data);
 			free(array->dims);
