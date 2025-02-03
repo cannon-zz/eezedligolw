@@ -174,3 +174,74 @@ union ligolw_cell *ligolw_cell_from_txt(union ligolw_cell *cell, enum ligolw_cel
 
 	return cell;
 }
+
+
+/*
+ * assign a union ligolw_cell's contents to a C variable.  dest must point
+ * to the location of a C type maching the type of the cell's contents.
+ * returns 0 on success, -1 on failure.
+ */
+
+
+int ligolw_cell_to_c(const union ligolw_cell *cell, enum ligolw_cell_type type, void *dest)
+{
+	switch(type) {
+	case ligolw_cell_type_char_s:
+	case ligolw_cell_type_char_v:
+	case ligolw_cell_type_ilwdchar:
+	case ligolw_cell_type_ilwdchar_u:
+	case ligolw_cell_type_lstring:
+		*(const char **) dest = cell->as_string;
+		break;
+
+	case ligolw_cell_type_blob:
+		*(const unsigned char **) dest = cell->as_blob;
+		break;
+
+	case ligolw_cell_type_int_2s:
+		*(int16_t *) dest = cell->as_int;
+		break;
+
+	case ligolw_cell_type_int_2u:
+		*(uint16_t *) dest = cell->as_uint;
+		break;
+
+	case ligolw_cell_type_int_4s:
+		*(int32_t *) dest = cell->as_int;
+		break;
+
+	case ligolw_cell_type_int_4u:
+		*(uint32_t *) dest = cell->as_uint;
+		break;
+
+	case ligolw_cell_type_int_8s:
+		*(int64_t *) dest = cell->as_int;
+		break;
+
+	case ligolw_cell_type_int_8u:
+		*(uint64_t *) dest = cell->as_uint;
+		break;
+
+	case ligolw_cell_type_real_4:
+		*(float *) dest = cell->as_double;
+		break;
+
+	case ligolw_cell_type_real_8:
+		*(double *) dest = cell->as_double;
+		break;
+
+	case ligolw_cell_type_complex_8:
+		*(float complex *) dest = cell->as_double_complex;
+		break;
+
+	case ligolw_cell_type_complex_16:
+		*(double complex *) dest = cell->as_double_complex;
+		break;
+
+	default:
+		/* unrecognized type */
+		return -1;
+	}
+
+	return 0;
+}

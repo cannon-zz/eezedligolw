@@ -262,58 +262,10 @@ int ligolw_unpacking_row_builder(struct ligolw_table *table, struct ligolw_table
 			 * but is ignored */
 			continue;
 
-		switch(spec->type) {
-		case ligolw_cell_type_char_s:
-		case ligolw_cell_type_char_v:
-		case ligolw_cell_type_ilwdchar:
-		case ligolw_cell_type_ilwdchar_u:
-		case ligolw_cell_type_lstring:
-			*(const char **) spec->dest = row.cells[c].as_string;
-			break;
-
-		case ligolw_cell_type_blob:
-			*(const unsigned char **) spec->dest = row.cells[c].as_blob;
-			break;
-
-		case ligolw_cell_type_int_2s:
-			*(int16_t *) spec->dest = row.cells[c].as_int;
-			break;
-
-		case ligolw_cell_type_int_2u:
-			*(uint16_t *) spec->dest = row.cells[c].as_uint;
-			break;
-
-		case ligolw_cell_type_int_4s:
-			*(int32_t *) spec->dest = row.cells[c].as_int;
-			break;
-
-		case ligolw_cell_type_int_4u:
-			*(uint32_t *) spec->dest = row.cells[c].as_uint;
-			break;
-
-		case ligolw_cell_type_int_8s:
-			*(int64_t *) spec->dest = row.cells[c].as_int;
-			break;
-
-		case ligolw_cell_type_int_8u:
-			*(uint64_t *) spec->dest = row.cells[c].as_uint;
-			break;
-
-		case ligolw_cell_type_real_4:
-			*(float *) spec->dest = row.cells[c].as_double;
-			break;
-
-		case ligolw_cell_type_real_8:
-			*(double *) spec->dest = row.cells[c].as_double;
-			break;
-
-		case ligolw_cell_type_complex_8:
-			*(float complex *) spec->dest = row.cells[c].as_double_complex;
-			break;
-
-		case ligolw_cell_type_complex_16:
-			*(double complex *) spec->dest = row.cells[c].as_double_complex;
-			break;
+		if(ligolw_cell_to_c(&row.cells[c], spec->type, spec->dest)) {
+			/* spec provided an invalid type */
+			free(row.cells);
+			return -(spec - (struct ligolw_unpacking_spec *) data + 1);
 		}
 	}
 

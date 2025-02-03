@@ -90,6 +90,7 @@ enum ligolw_cell_type ligolw_type_name_to_enum(const char *);
 const char *ligolw_type_enum_to_name(enum ligolw_cell_type);
 size_t ligolw_type_enum_to_size(enum ligolw_cell_type);
 union ligolw_cell *ligolw_cell_from_txt(union ligolw_cell *, enum ligolw_cell_type, char *);
+int ligolw_cell_to_c(const union ligolw_cell *, enum ligolw_cell_type, void *);
 
 ezxml_t ligolw_array_get(ezxml_t, const char *);
 struct ligolw_array *ligolw_array_parse(ezxml_t);
