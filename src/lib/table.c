@@ -309,55 +309,11 @@ int ligolw_table_print(FILE *f, struct ligolw_table *table)
 		else
 			fprintf(f, "\t\t");
 		for(c = 0; c < table->n_columns; c++) {
+			char *buf = ligolw_cell_to_txt(NULL, table->rows[r].cells[c], table->columns[c].type);
 			if(c)
 				fprintf(f, "%c", table->delimiter);
-
-			switch(table->columns[c].type) {
-			case ligolw_cell_type_char_s:
-			case ligolw_cell_type_char_v:
-			case ligolw_cell_type_ilwdchar:
-			case ligolw_cell_type_ilwdchar_u:
-			case ligolw_cell_type_blob:
-			case ligolw_cell_type_lstring:
-				/* FIXME: binary types need to pass through
-				 * encoders first */
-				/* FIXME: string types need to pass through
-				 * encoders first */
-				fprintf(f, "\"%s\"", table->rows[r].cells[c].as_string);
-				break;
-
-			case ligolw_cell_type_int_2s:
-			case ligolw_cell_type_int_4s:
-			case ligolw_cell_type_int_8s:
-				fprintf(f, "%lld", (long long) table->rows[r].cells[c].as_int);
-				break;
-
-			case ligolw_cell_type_int_2u:
-			case ligolw_cell_type_int_4u:
-			case ligolw_cell_type_int_8u:
-				fprintf(f, "%llu", (unsigned long long) table->rows[r].cells[c].as_uint);
-				break;
-
-			case ligolw_cell_type_real_4:
-				fprintf(f, "%.7g", table->rows[r].cells[c].as_double);
-				break;
-
-			case ligolw_cell_type_real_8:
-				fprintf(f, "%.16g", table->rows[r].cells[c].as_double);
-				break;
-
-			case ligolw_cell_type_complex_8: {
-				double complex x = table->rows[r].cells[c].as_double_complex;
-				fprintf(f, "%.7g+i%.7g", creal(x), cimag(x));
-				break;
-			}
-
-			case ligolw_cell_type_complex_16: {
-				double complex x = table->rows[r].cells[c].as_double_complex;
-				fprintf(f, "%.16g+i%.16g", creal(x), cimag(x));
-				break;
-			}
-			}
+			fputs(buf, f);
+			free(buf);
 		}
 	}
 
