@@ -50,15 +50,17 @@ static const char *ligolw_strip_column_name(const char *Name)
 
 
 /*
- * Default row builder call-back.
+ * Default row builder call-back.  Appends the contents of the row object
+ * to the rows array in table.
  */
 
 
-int ligolw_table_default_row_callback(struct ligolw_table *table, struct ligolw_table_row row, void *ignored)
+int ligolw_table_default_row_callback(struct ligolw_table *table, struct ligolw_table_row *row, void *ignored)
 {
 	table->rows = realloc(table->rows, (table->n_rows + 1) * sizeof(*table->rows));
-	table->rows[table->n_rows] = row;
+	table->rows[table->n_rows] = *row;
 	table->n_rows++;
+	free(row);
 	return 0;
 }
 
@@ -79,23 +81,25 @@ union ligolw_cell ligolw_row_get_cell(const struct ligolw_table_row *row, const 
 /*
  * Parse an ezxml_t Table element into a struct ligolw_table structure.  If
  * row_callback() is NULL, then the default row builder is used, which
- * inserts the rows into the ligolw_table structure.  Calling code can
- * provide it's own function, which will be called after each row is
- * constructed.  This allows the rows to be "intercepted", so that some
- * other thing can be done with them other than being inserted into the
- * ligolw_table.  The call-back function will be passed the pointer to the
- * current ligolw_table structure as its first argument, the pointer to the
- * new row as its second, and the callback_data pointer as its third
- * argument.  The row_callback() function must free the row's cells element
- * if it will not be saving it, or memory will be leaked.  The call-back
- * returns 0 to indicate success, non-zero to indicate failure.
+ * inserts the rows directly into the ligolw_table structure.  Calling code
+ * can provide it's own function, which will be called after each row is
+ * constructed.  This allows the data contained in each row to be
+ * redirected, for example to store it in an application-specific type, or
+ * process it on-the-fly to produce some kind of output directly.  The
+ * call-back function will be passed the address of the current
+ * ligolw_table structure as its first argument, the address of a newly
+ * allocated row structure as its second, and the callback_data pointer as
+ * its third argument.  The row_callback() function takes ownership of the
+ * row structure, and is responsible for freeing all memory associated with
+ * the object when it no longer requires it. The call-back returns 0 to
+ * indicate success, non-zero to indicate failure.
  *
  * ligolw_table_parse() return the pointer to the new struct ligolw_table
  * structure on success, NULL on failure.
  */
 
 
-struct ligolw_table *ligolw_table_parse(ezxml_t elem, int (row_callback)(struct ligolw_table *, struct ligolw_table_row, void *), void *callback_data)
+struct ligolw_table *ligolw_table_parse(ezxml_t elem, int (row_callback)(struct ligolw_table *, struct ligolw_table_row *, void *), void *callback_data)
 {
 	struct ligolw_table *table;
 	char *txt;
@@ -136,18 +140,24 @@ struct ligolw_table *ligolw_table_parse(ezxml_t elem, int (row_callback)(struct 
 		row_callback = ligolw_table_default_row_callback;
 
 	for(txt = stream->txt; txt && *txt; ) {
-		struct ligolw_table_row row;
 		int c;
-
-		row.table = table;
-		row.cells = malloc(table->n_columns * sizeof(*row.cells));
+		struct ligolw_table_row *row = malloc(sizeof(*row));
+		union ligolw_cell *cells = malloc(table->n_columns * sizeof(*cells));
+		if(!row || !cells) {
+			free(row);
+			free(cells);
+			ligolw_table_free(table);
+			return NULL;
+		}
+		row->table = table;
+		row->cells = cells;
 
 		for(c = 0; c < table->n_columns; c++) {
 			char *end, *next;
 
 			ligolw_next_token(&txt, &end, &next, table->delimiter);
 
-			ligolw_cell_from_txt(&(row.cells[c]), table->columns[c].type, txt);
+			ligolw_cell_from_txt(&cells[c], table->columns[c].type, txt);
 
 			/* null-terminate current token.  this does not
 			 * interfer with the exit test for the loop over
@@ -160,6 +170,7 @@ struct ligolw_table *ligolw_table_parse(ezxml_t elem, int (row_callback)(struct 
 			txt = next;
 		}
 
+		/* row_callback takes ownership of row */
 		if(row_callback(table, row, callback_data)) {
 			ligolw_table_free(table);
 			return NULL;
@@ -235,11 +246,16 @@ ezxml_t ligolw_table_get(ezxml_t xmldoc, const char *table_name)
 
 
 /*
- * Generic unpacking row builder.
+ * Utility to assist with unpacking a table row into alternate storage.
+ * NOTE:  this is not a row builder call-back for use with
+ * ligolw_table_parse(), it is meant to assist with writing call-backs.
+ * The signature is incompatible, and this does not take ownership of the
+ * row object, it will not row the row object's contents when it is
+ * finished.
  */
 
 
-int ligolw_unpacking_row_builder(struct ligolw_table *table, struct ligolw_table_row row, void *data)
+int ligolw_table_unpack_row(struct ligolw_table *table, struct ligolw_table_row row, void *data)
 {
 	struct ligolw_unpacking_spec *spec;
 
@@ -251,12 +267,11 @@ int ligolw_unpacking_row_builder(struct ligolw_table *table, struct ligolw_table
 			if(!(spec->flags & LIGOLW_COLUMN_FLAGS_REQUIRED))
 				/* not required */
 				continue;
-			free(row.cells);
+			/* missing column is required */
 			return spec - (struct ligolw_unpacking_spec *) data + 1;
 		}
 		if(spec->type != type) {
 			/* type mismatch */
-			free(row.cells);
 			return -(spec - (struct ligolw_unpacking_spec *) data + 1);
 		}
 		if(!spec->dest)
@@ -266,12 +281,9 @@ int ligolw_unpacking_row_builder(struct ligolw_table *table, struct ligolw_table
 
 		if(ligolw_cell_to_c(&row.cells[c], spec->type, spec->dest)) {
 			/* spec provided an invalid type */
-			free(row.cells);
 			return -(spec - (struct ligolw_unpacking_spec *) data + 1);
 		}
 	}
-
-	free(row.cells);
 
 	return 0;
 }
