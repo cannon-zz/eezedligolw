@@ -26,7 +26,10 @@
 
 /*
  * Extract the meaningful portion of a Name attribute.  Returns a pointer
- * to the last colon-delimited substring before an optional ":suffix".
+ * to the last colon-delimited substring before an optional ":suffix".  If
+ * suffix is NULL then any trailing suffix is allowed and the portion
+ * preceeding the last ":" is identified and returned, otherwise the suffix
+ * must equal the given string.
  */
 
 
