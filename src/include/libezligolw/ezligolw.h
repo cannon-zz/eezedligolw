@@ -58,7 +58,9 @@ struct ligolw_array {
 	char delimiter;
 	int n_dims;
 	struct ligolw_array_dim {
-		int n;	/* must be first so a Dim can be type cast to int */
+		/* must be first so a Dim can be type cast to int */
+		int n;
+		/* each is set to NULL if the attribute is not present */
 		const char *name;
 		const char *unit;
 		const char *start;

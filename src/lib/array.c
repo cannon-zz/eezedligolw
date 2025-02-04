@@ -101,10 +101,12 @@ struct ligolw_array *ligolw_array_parse(ezxml_t elem)
 	/* this simplifies error checking in calling code */
 	if(!elem)
 		return NULL;
+
 	array = malloc(sizeof(*array));
 	if(!array)
 		return NULL;
 
+	/* FIXME:  should should :array suffix? */
 	array->name = ligolw_strip_array_name(ezxml_attr(elem, "Name"));
 	array->type = ligolw_type_name_to_enum(ezxml_attr(elem, "Type"));
 	array->delimiter = '\0';
@@ -112,18 +114,20 @@ struct ligolw_array *ligolw_array_parse(ezxml_t elem)
 	array->dims = NULL;
 	array->data = NULL;
 
+	/* from here on, ligolw_array_free() can be used for memory cleanup */
+
 	if(!ligolw_cell_type_is_numeric(array->type)) {
 		/* non-numeric types not supported */
-		free(array);
+		ligolw_array_free(array);
 		return NULL;
 	}
 
 	for(n = 1, dim = ezxml_child(elem, "Dim"); dim; dim = dim->next) {
+		/* FIXME:  check for failure (extremely unlikely) */
 		array->dims = realloc(array->dims, (array->n_dims + 1) * sizeof(*array->dims));
 
 		array->dims[array->n_dims].n = strtoll(dim->txt, NULL, 0);
 		n *= array->dims[array->n_dims].n;
-		/* each is set to NULL if the attribute does not exist */
 		array->dims[array->n_dims].name = ligolw_strip_dim_name(ezxml_attr(dim, "Name"));
 		array->dims[array->n_dims].unit = ezxml_attr(dim, "Unit");
 		array->dims[array->n_dims].start = ezxml_attr(dim, "Start");
@@ -141,8 +145,7 @@ struct ligolw_array *ligolw_array_parse(ezxml_t elem)
 	stride = ligolw_type_enum_to_size(array->type);
 	array->data = malloc(n * stride);
 	if(!array->data) {
-		free(array->dims);
-		free(array);
+		ligolw_array_free(array);
 		return NULL;
 	}
 
@@ -161,9 +164,7 @@ struct ligolw_array *ligolw_array_parse(ezxml_t elem)
 		 * know the _to_c() function will not do something weird to
 		 * the contents of the array. */
 		if(!ligolw_cell_from_txt(&cell, array->type, txt) || ligolw_cell_to_c(&cell, array->type, data)) {
-			free(array->data);
-			free(array->dims);
-			free(array);
+			ligolw_array_free(array);
 			return NULL;
 		}
 
