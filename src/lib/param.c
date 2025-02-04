@@ -22,7 +22,9 @@
 
 
 /*
- * Parse an ezxml_t Param element.
+ * Parse an ezxml_t Param element.  The value is returned as a union
+ * ligolw_cell object, and the type of the data is stored in the location
+ * pointed to by type.
  */
 
 
