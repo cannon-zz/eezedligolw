@@ -123,7 +123,7 @@ size_t ligolw_type_enum_to_size(enum ligolw_cell_type t)
  */
 
 
-union ligolw_cell *ligolw_cell_from_txt(union ligolw_cell *cell, enum ligolw_cell_type type, char *txt)
+union ligolw_cell *ligolw_cell_from_txt(union ligolw_cell *cell, enum ligolw_cell_type type, const char *txt)
 {
 	/* FIXME:  implement error checking */
 	switch(type) {
@@ -161,8 +161,10 @@ union ligolw_cell *ligolw_cell_from_txt(union ligolw_cell *cell, enum ligolw_cel
 	case ligolw_cell_type_complex_8:
 	case ligolw_cell_type_complex_16: {
 		double re, im;
-		re = strtod(txt, &txt);
+		char *end;
+		re = strtod(txt, &end);
 		/* skip "+i" */
+		txt = end;
 		txt += 2;
 		im = strtod(txt, NULL);
 		cell->as_double_complex = re + im * I;

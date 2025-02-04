@@ -89,7 +89,7 @@ const char *ligolw_strip_name(const char *, const char *);
 enum ligolw_cell_type ligolw_type_name_to_enum(const char *);
 const char *ligolw_type_enum_to_name(enum ligolw_cell_type);
 size_t ligolw_type_enum_to_size(enum ligolw_cell_type);
-union ligolw_cell *ligolw_cell_from_txt(union ligolw_cell *, enum ligolw_cell_type, char *);
+union ligolw_cell *ligolw_cell_from_txt(union ligolw_cell *, enum ligolw_cell_type, const char *);
 char *ligolw_cell_to_txt(char *, union ligolw_cell, enum ligolw_cell_type);
 int ligolw_cell_to_c(const union ligolw_cell *, enum ligolw_cell_type, void *);
 
