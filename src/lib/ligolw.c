@@ -54,3 +54,42 @@ const char *ligolw_strip_name(const char *Name, const char *suffix)
 
 	return Name + (start - buff);
 }
+
+
+/*
+ * search for and return the first element of the given type in the XML
+ * tree rooted at the given element.  if name is not NULL, then the element
+ * must have a Name attribute and it must equal the given value.
+ *
+ * Example:
+ *
+ *	for(
+ *		elem = ligolw_elem_iter(root, "LIGO_LW", "REAL8FrequencySeries");
+ *		elem;
+ *		elem = ligolw_elem_next(elem, "LIGO_LW", "REAL8FrequencySeries")
+ *	) {
+ *		...
+ *	}
+ */
+
+
+ezxml_t ligolw_elem_iter(ezxml_t elem, const char *type, const char *name)
+{
+	int n = name ? strlen(name) : 0;
+
+	for(elem = ezxml_child(elem, type); elem; elem = elem->next)
+		if(!name || !strncmp(ligolw_strip_name(ezxml_attr(elem, "Name"), NULL), name, n))
+			break;
+	return elem;
+}
+
+
+ezxml_t ligolw_elem_next(ezxml_t elem, const char *type, const char *name)
+{
+	int n = name ? strlen(name) : 0;
+
+	for(elem = elem ? elem->next : NULL; elem; elem = elem->next)
+		if(!name || !strncmp(ligolw_strip_name(ezxml_attr(elem, "Name"), NULL), name, n))
+			break;
+	return elem;
+}

@@ -88,6 +88,9 @@ struct ligolw_table {
 
 
 const char *ligolw_strip_name(const char *, const char *);
+ezxml_t ligolw_elem_iter(ezxml_t, const char *, const char *);
+ezxml_t ligolw_elem_next(ezxml_t, const char *, const char *);
+
 enum ligolw_cell_type ligolw_type_name_to_enum(const char *);
 const char *ligolw_type_enum_to_name(enum ligolw_cell_type);
 size_t ligolw_type_enum_to_size(enum ligolw_cell_type);
