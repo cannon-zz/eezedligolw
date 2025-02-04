@@ -106,6 +106,10 @@ struct ligolw_table *ligolw_table_parse(ezxml_t elem, int (row_callback)(struct 
 	ezxml_t column;
 	ezxml_t stream;
 
+	/* this simplifies error checking in calling code */
+	if(!elem)
+		return NULL;
+
 	table = malloc(sizeof(*table));
 	if(!table)
 		return NULL;

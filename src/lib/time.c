@@ -31,6 +31,11 @@
 
 const char *ligolw_time_parse(ezxml_t elem, const char **type)
 {
+	/* this simplifies error checking in calling code */
+	if(!elem) {
+		*type = NULL;
+		return NULL;
+	}
 	*type = ezxml_attr(elem, "Type");
 	return elem->txt;
 }

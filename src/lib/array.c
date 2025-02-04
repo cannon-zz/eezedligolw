@@ -98,6 +98,9 @@ struct ligolw_array *ligolw_array_parse(ezxml_t elem)
 	int stride;
 	int n;
 
+	/* this simplifies error checking in calling code */
+	if(!elem)
+		return NULL;
 	array = malloc(sizeof(*array));
 	if(!array)
 		return NULL;
