@@ -69,3 +69,30 @@ ezxml_t ligolw_param_get(ezxml_t xmldoc, const char *name)
 
 	return elem;
 }
+
+
+/*
+ * Utility for common case of retrieving a parameter value whose type is
+ * known.  The value, whose type must be type, is written to the address in
+ * dst, which must be large enough to store the value.  The return value is
+ * 0 on success, or != 0 on failure, for example if the requested type does
+ * not match the Param element's type.
+ */
+
+
+int ligolw_param_get_as_c(ezxml_t elem, void *dst, enum ligolw_cell_type type)
+{
+	enum ligolw_cell_type param_type;
+	union ligolw_cell cell;
+
+	/* this simplifies error checking in calling code */
+	if(!elem)
+		return -1;
+
+	cell = ligolw_param_parse(elem, &param_type);
+
+	if(param_type != type)
+		return -1;
+
+	return ligolw_cell_to_c(&cell, param_type, dst);
+}
