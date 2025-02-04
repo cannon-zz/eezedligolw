@@ -228,17 +228,19 @@ int ligolw_table_get_column(struct ligolw_table *table, const char *name, enum l
 
 
 /*
- * Find an ezxml_t Table element in a document.
+ * Find an ezxml_t Table element in a document.  If name is NULL the first
+ * element found is reported, otherwise the elment's Name attribute must
+ * match name (ignoring an optional :... suffix).
  */
 
 
-ezxml_t ligolw_table_get(ezxml_t xmldoc, const char *table_name)
+ezxml_t ligolw_table_get(ezxml_t xmldoc, const char *name)
 {
-	int n = strlen(table_name);
+	int n = name ? strlen(name) : 0;
 	ezxml_t table;
 
 	for(table = ezxml_child(xmldoc, "Table"); table; table = table->next)
-		if(!strncmp(ligolw_strip_table_name(ezxml_attr(table, "Name")), table_name, n))
+		if(!n || !strncmp(ligolw_strip_table_name(ezxml_attr(table, "Name")), name, n))
 			break;
 
 	return table;

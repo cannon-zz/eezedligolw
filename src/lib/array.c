@@ -189,17 +189,19 @@ void ligolw_array_free(struct ligolw_array *array)
 
 
 /*
- * Find an ezxml_t Array element in a document.
+ * Find an ezxml_t Array element in a document.  If name is NULL the first
+ * element found is reported, otherwise the elment's Name attribute must
+ * match name (ignoring an optional :... suffix).
  */
 
 
 ezxml_t ligolw_array_get(ezxml_t xmldoc, const char *name)
 {
-	int n = strlen(name);
+	int n = name ? strlen(name) : 0;
 	ezxml_t elem;
 
 	for(elem = ezxml_child(xmldoc, "Array"); elem; elem = elem->next)
-		if(!strncmp(ligolw_strip_array_name(ezxml_attr(elem, "Name")), name, n))
+		if(!n || !strncmp(ligolw_strip_array_name(ezxml_attr(elem, "Name")), name, n))
 			break;
 
 	return elem;

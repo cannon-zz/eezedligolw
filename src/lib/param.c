@@ -52,17 +52,19 @@ union ligolw_cell ligolw_param_parse(ezxml_t elem, enum ligolw_cell_type *type)
 
 
 /*
- * Find an ezxml_t Param element in a document.
+ * Find an ezxml_t Param element in a document.  If name is NULL the first
+ * element found is reported, otherwise the elment's Name attribute must
+ * match name (ignoring an optional :... suffix).
  */
 
 
 ezxml_t ligolw_param_get(ezxml_t xmldoc, const char *name)
 {
-	int n = strlen(name);
+	int n = name ? strlen(name) : 0;
 	ezxml_t elem;
 
 	for(elem = ezxml_child(xmldoc, "Param"); elem; elem = elem->next)
-		if(!strncmp(ligolw_strip_param_name(ezxml_attr(elem, "Name")), name, n))
+		if(!n || !strncmp(ligolw_strip_param_name(ezxml_attr(elem, "Name")), name, n))
 			break;
 
 	return elem;
