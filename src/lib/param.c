@@ -22,6 +22,18 @@
 
 
 /*
+ * Extract the meaningful portion of a Param name.  Returns a pointer to
+ * the last colon-delimited substring before an optional ":param" suffix.
+ */
+
+
+static const char *ligolw_strip_param_name(const char *Name)
+{
+	return ligolw_strip_name(Name, "param");
+}
+
+
+/*
  * Parse an ezxml_t Param element.  The value is returned as a union
  * ligolw_cell object, and the type of the data is stored in the location
  * pointed to by type.
@@ -46,10 +58,11 @@ union ligolw_cell ligolw_param_parse(ezxml_t elem, enum ligolw_cell_type *type)
 
 ezxml_t ligolw_param_get(ezxml_t xmldoc, const char *name)
 {
+	int n = strlen(name);
 	ezxml_t elem;
 
 	for(elem = ezxml_child(xmldoc, "Param"); elem; elem = elem->next)
-		if(!strcmp(ezxml_attr(elem, "Name"), name))
+		if(!strncmp(ligolw_strip_param_name(ezxml_attr(elem, "Name")), name, n))
 			break;
 
 	return elem;
