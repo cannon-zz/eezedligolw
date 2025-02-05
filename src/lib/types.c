@@ -59,6 +59,9 @@ enum ligolw_cell_type ligolw_type_name_to_enum(const char *name)
 {
 	const struct name_to_enum *n_to_e;
 
+	if(!name)
+		return -1;
+
 	for(n_to_e = name_to_enum; n_to_e->name; n_to_e++)
 		if(!strcmp(n_to_e->name, name))
 			/* found it */
