@@ -30,10 +30,16 @@
 
 union ligolw_cell ligolw_param_parse(ezxml_t elem, enum ligolw_cell_type *type)
 {
+	const char *type_name = ezxml_attr(elem, "Type");
 	union ligolw_cell value;
 
-	*type = ligolw_type_name_to_enum(ezxml_attr(elem, "Type"));
-	ligolw_cell_from_txt(&value, *type, elem->txt);
+	if(!type_name)
+		/* default */
+		type_name = "lstring";
+
+	*type = ligolw_type_name_to_enum(type_name);
+	if(elem)
+		ligolw_cell_from_txt(&value, *type, elem->txt);
 
 	return value;
 }
