@@ -167,9 +167,8 @@ union ligolw_cell *ligolw_cell_from_txt(union ligolw_cell *cell, enum ligolw_cel
 		char *end;
 		re = strtod(txt, &end);
 		/* skip "+i" */
-		txt = end;
-		txt += 2;
-		im = strtod(txt, NULL);
+		end += 2;
+		im = strtod(end, NULL);
 		cell->as_double_complex = re + im * I;
 		break;
 	}
