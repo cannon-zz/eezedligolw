@@ -48,14 +48,7 @@ const char *ligolw_time_parse(ezxml_t elem, const char **type)
  */
 
 
-ezxml_t ligolw_time_get(ezxml_t xmldoc, const char *name)
+ezxml_t ligolw_time_get(ezxml_t elem, const char *name)
 {
-	int n = name ? strlen(name) : 0;
-	ezxml_t elem;
-
-	for(elem = ezxml_child(xmldoc, "Time"); elem; elem = elem->next)
-		if(!n || !strncmp(ezxml_attr(elem, "Name"), name, n))
-			break;
-
-	return elem;
+	return ligolw_elem_iter(elem, "Time", name);
 }

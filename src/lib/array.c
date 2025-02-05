@@ -199,14 +199,7 @@ void ligolw_array_free(struct ligolw_array *array)
  */
 
 
-ezxml_t ligolw_array_get(ezxml_t xmldoc, const char *name)
+ezxml_t ligolw_array_get(ezxml_t elem, const char *name)
 {
-	int n = name ? strlen(name) : 0;
-	ezxml_t elem;
-
-	for(elem = ezxml_child(xmldoc, "Array"); elem; elem = elem->next)
-		if(!n || !strncmp(ligolw_strip_array_name(ezxml_attr(elem, "Name")), name, n))
-			break;
-
-	return elem;
+	return ligolw_elem_iter(elem, "Array", name);
 }

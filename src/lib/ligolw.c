@@ -29,33 +29,33 @@
  * to the last colon-delimited substring before an optional ":suffix".  If
  * suffix is NULL then any trailing suffix is allowed and the portion
  * preceeding the last ":" is identified and returned, otherwise the suffix
- * must equal the given string.
+ * must equal the given string.  The return value is NULL if Name is NULL,
+ * otherwise the address of the start of the portion identified, or NULL if
+ * the suffix does not match.
  */
 
 
 const char *ligolw_strip_name(const char *Name, const char *suffix)
 {
-	if(!Name)
+	/* start of Name or 2nd last ':' if more than 1 */
+	const char *start = Name - 1;
+	/* last ':' if at least 1 */
+	const char *end = NULL;
+
+	if(Name)
+		for(; *Name; Name++) {
+			if(*Name == ':') {
+				if(end)
+					start = end;
+				end = Name;
+			}
+		}
+	start++;
+
+	if(end && suffix && strcmp(end + 1, suffix))
 		return NULL;
 
-	char buff[strlen(Name) + 1];
-	char *pos = buff;
-	char *start;
-
-	strcpy(buff, Name);
-
-	if(suffix) {
-		int n = strlen(suffix);
-		do
-			start = strsep(&pos, ":");
-		while(pos && strncmp(pos, suffix, n));
-	} else {
-		do
-			start = strsep(&pos, ":");
-		while(pos);
-	}
-
-	return Name + (start - buff);
+	return start;
 }
 
 

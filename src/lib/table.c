@@ -238,16 +238,9 @@ int ligolw_table_get_column(struct ligolw_table *table, const char *name, enum l
  */
 
 
-ezxml_t ligolw_table_get(ezxml_t xmldoc, const char *name)
+ezxml_t ligolw_table_get(ezxml_t elem, const char *name)
 {
-	int n = name ? strlen(name) : 0;
-	ezxml_t table;
-
-	for(table = ezxml_child(xmldoc, "Table"); table; table = table->next)
-		if(!n || !strncmp(ligolw_strip_table_name(ezxml_attr(table, "Name")), name, n))
-			break;
-
-	return table;
+	return ligolw_elem_iter(elem, "Table", name);
 }
 
 
