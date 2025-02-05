@@ -149,7 +149,7 @@ struct ligolw_array *ligolw_array_parse(ezxml_t elem)
 		return NULL;
 	}
 
-	array->delimiter = *ezxml_attr(stream, "Delimiter");
+	array->delimiter = ezxml_attr(stream, "Delimiter") ? *ezxml_attr(stream, "Delimiter") : ',';
 
 	for(data = array->data, txt = stream->txt; txt && *txt; data += stride) {
 		union ligolw_cell cell;

@@ -138,7 +138,7 @@ struct ligolw_table *ligolw_table_parse(ezxml_t elem, int (row_callback)(struct 
 		return table;
 	}
 
-	table->delimiter = *ezxml_attr(stream, "Delimiter");
+	table->delimiter = ezxml_attr(stream, "Delimiter") ? *ezxml_attr(stream, "Delimiter") : ',';
 
 	if(!row_callback)
 		row_callback = ligolw_table_default_row_callback;
