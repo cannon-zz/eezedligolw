@@ -87,6 +87,9 @@ struct ligolw_table {
 };
 
 
+ezxml_t ligolw_parse_file(const char *);
+
+
 const char *ligolw_strip_name(const char *, const char *);
 ezxml_t ligolw_elem_iter(ezxml_t, const char *, const char *);
 ezxml_t ligolw_elem_next(ezxml_t, const char *, const char *);
