@@ -10,6 +10,7 @@ config.h.in
 config.log
 config.status
 configure
+examples/psd_example
 examples/sim_burst_example
 gnuscripts/compile
 gnuscripts/config.guess
