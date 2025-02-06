@@ -39,7 +39,7 @@ static int sim_burst_row_callback(struct ligolw_table *table, struct ligolw_tabl
 	SimBurst *new = XLALCreateSimBurst();
 	struct ligolw_unpacking_spec *spec;
 	struct ligolw_unpacking_spec sim_burst_basic[] = {
-		{&new->process_id, "process_id", ligolw_cell_type_int_8s, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{&new->process_id, "process:process_id", ligolw_cell_type_int_8s, LIGOLW_COLUMN_FLAGS_REQUIRED},
 		{NULL, "waveform", ligolw_cell_type_lstring, LIGOLW_COLUMN_FLAGS_REQUIRED},
 		{&new->ra, "ra", ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
 		{&new->dec, "dec", ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
@@ -47,7 +47,7 @@ static int sim_burst_row_callback(struct ligolw_table *table, struct ligolw_tabl
 		{&new->time_geocent_gps.gpsSeconds, "time_geocent_gps", ligolw_cell_type_int_4s, LIGOLW_COLUMN_FLAGS_REQUIRED},
 		{&new->time_geocent_gps.gpsNanoSeconds, "time_geocent_gps_ns", ligolw_cell_type_int_4s, LIGOLW_COLUMN_FLAGS_REQUIRED},
 		{&new->time_geocent_gmst, "time_geocent_gmst", ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{&new->time_slide_id, "time_slide_id", ligolw_cell_type_int_8s, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{&new->time_slide_id, "time_slide:time_slide_id", ligolw_cell_type_int_8s, LIGOLW_COLUMN_FLAGS_REQUIRED},
 		{&new->simulation_id, "simulation_id", ligolw_cell_type_int_8s, LIGOLW_COLUMN_FLAGS_REQUIRED},
 		{NULL, NULL, -1, 0}
 	};
