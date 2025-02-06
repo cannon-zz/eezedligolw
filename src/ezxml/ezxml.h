@@ -66,6 +66,11 @@ ezxml_t ezxml_parse_fd(int fd);
 
 // a wrapper for ezxml_parse_fd() that accepts a file name
 ezxml_t ezxml_parse_file(const char *file);
+
+// equivalent to ezxml_parse_file() but transparently decompresses
+// gzip-compressed files when that format is detected.  also works with
+// uncompressed files
+ezxml_t ezxml_parse_gzfile(const char *file);
     
 // Wrapper for ezxml_parse_str() that accepts a file stream. Reads the entire
 // stream into memory and then parses it. For xml files, use ezxml_parse_file()

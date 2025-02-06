@@ -4,7 +4,6 @@ lib_LTLIBRARIES = libezligolw.la
 
 libezligolw_la_SOURCES = \
 	array.c \
-	io.c \
 	ligolw.c \
 	param.c \
 	table.c \

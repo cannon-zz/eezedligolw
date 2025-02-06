@@ -28,6 +28,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <unistd.h>
+#include <zlib.h>
 #include <sys/types.h>
 #ifndef EZXML_NOMMAP
 #include <sys/mman.h>
@@ -667,6 +668,59 @@ ezxml_t ezxml_parse_file(const char *file)
     
     if (fd >= 0) close(fd);
     return xml;
+}
+
+// equivalent to ezxml_parse_file() but transparently decompresses
+// gzip-compressed files when that format is detected.  also works with
+// uncompressed files
+ezxml_t ezxml_parse_gzfile(const char *file)
+{
+    gzFile f;
+    char *buf = NULL;;
+    char *newbuf;
+    size_t alloc_size = 65536;
+    size_t pos = 0;
+    size_t l;
+    ezxml_root_t xml;
+
+    f = gzopen(file, "rb");
+    if(!f)
+        return NULL;
+
+    // set size of input buffer.  supposedly improves speed, but I've not
+    // done any benchmarking
+    gzbuffer(f, 131072);
+
+    // loop until we stop needing more space
+    do {
+        // double the buffer size
+        newbuf = realloc(buf, alloc_size *= 2);
+        if(!newbuf) {
+            gzclose(f);
+            free(buf);
+            return NULL;
+        }
+        buf = newbuf;
+
+        // get more data
+        l = gzread(f, buf + pos, alloc_size - pos);
+        pos += l;
+    } while(pos == alloc_size);
+
+    gzclose(f);
+
+    // release memory we didn't end up needing
+    newbuf = realloc(buf, pos);
+    if(!newbuf) {
+        free(buf);
+        return NULL;
+    }
+    buf = newbuf;
+
+    xml = (ezxml_root_t) ezxml_parse_str(buf, pos);
+    xml->len = -1;	// tell ezxml_free() to free buf
+
+    return (ezxml_t) xml;
 }
 
 // Encodes ampersand sequences appending the results to *dst, reallocating *dst

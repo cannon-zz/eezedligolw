@@ -177,7 +177,7 @@ LALDict *XLALPSDsFromLIGOLw(
 		XLAL_ERROR_NULL(XLAL_EFUNC);
 
 	/* parse the document */
-	xmldoc = ligolw_parse_file(filename);
+	xmldoc = ezxml_parse_gzfile(filename);
 	if(!xmldoc) {
 		XLAL_PRINT_ERROR("error parsing \"%s\"", filename);
 		XLALDestroyDict(psds);
