@@ -25,10 +25,10 @@
 
 
 /*
- * Demonstration of the implementation of an XLAL-style drop-in replacement
- * of LALSimBurstTableFromLIGOLw() built on top of ezligolw.  For clarity,
- * the LAL code's ability to filter the input trigger list by GPS time has
- * not been implemented here.
+ * Demonstration of the implementation of an XLAL-style (near) drop-in
+ * replacement of LALSimBurstTableFromLIGOLw() built on top of ezligolw.
+ * For clarity, the LAL code's ability to filter the input trigger list by
+ * GPS time has not been implemented here.
  */
 
 
@@ -150,11 +150,11 @@ error:
 }
 
 
-int XLALSimBurstTableFromLIGOLw(
-	SimBurst **head,
+static int XLALTableFromLIGOLw(
+	void *head,
 	const char *filename,
-	int gps_start,
-	int gps_end
+	const char *table_name,
+	int row_callback(struct ligolw_table *, struct ligolw_table_row *, void *)
 )
 {
 	ezxml_t xmldoc;
@@ -162,7 +162,7 @@ int XLALSimBurstTableFromLIGOLw(
 	struct ligolw_table *table;
 
 	/* initialize the linked list */
-	*head = NULL;
+	*(void **) head = NULL;
 
 	/* parse the document */
 	xmldoc = ezxml_parse_gzfile(filename);
@@ -172,17 +172,17 @@ int XLALSimBurstTableFromLIGOLw(
 	}
 
 	/* find the sim_burst table */
-	elem = ligolw_table_get(xmldoc, "sim_burst");
+	elem = ligolw_table_get(xmldoc, table_name);
 	if(!elem) {
-		XLALPrintError("unable to locate sim_burst table\n");
+		XLALPrintError("unable to locate %s table\n", table_name);
 		ezxml_free(xmldoc);
 		XLAL_ERROR(XLAL_EDATA);
 	}
 
 	/* convert the rows into a LAL-style linked list */
-	table = ligolw_table_parse(elem, sim_burst_row_callback, head);
+	table = ligolw_table_parse(elem, row_callback, head);
 	if(!table) {
-		XLALPrintError("failure parsing sim_burst table\n");
+		XLALPrintError("failure parsing %s table\n", table_name);
 		ezxml_free(xmldoc);
 		XLAL_ERROR(XLAL_EDATA);
 	}
@@ -193,6 +193,15 @@ int XLALSimBurstTableFromLIGOLw(
 
 	/* success */
 	return 0;
+}
+
+
+int XLALSimBurstTableFromLIGOLw(
+	SimBurst **head,
+	const char *filename
+)
+{
+	return XLALTableFromLIGOLw(head, filename, "sim_burst", sim_burst_row_callback);
 }
 
 
@@ -216,9 +225,11 @@ int main(int argc, char *argv[])
 {
 	SimBurst *sims;
 
-	XLALSimBurstTableFromLIGOLw(&sims, "HL-INJECTIONS_PLAYGROUND-793154935-2524278.xml.gz", 0, 0);
+	XLALSimBurstTableFromLIGOLw(&sims, "HL-INJECTIONS_PLAYGROUND-793154935-2524278.xml.gz");
 
 	write(sims, "output.xml");
+
+	XLALDestroySimBurstTable(sims);
 
 	return 0;
 }
