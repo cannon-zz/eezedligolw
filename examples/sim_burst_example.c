@@ -165,7 +165,7 @@ int XLALSimBurstTableFromLIGOLw(
 	*head = NULL;
 
 	/* parse the document */
-	xmldoc = ezxml_parse_file(filename);
+	xmldoc = ezxml_parse_gzfile(filename);
 	if(!xmldoc) {
 		XLALPrintError("error parsing %s\n", filename);
 		XLAL_ERROR(XLAL_EIO);
@@ -216,7 +216,7 @@ int main(int argc, char *argv[])
 {
 	SimBurst *sims;
 
-	XLALSimBurstTableFromLIGOLw(&sims, "HL-INJECTIONS_PLAYGROUND-793154935-2524278.xml", 0, 0);
+	XLALSimBurstTableFromLIGOLw(&sims, "HL-INJECTIONS_PLAYGROUND-793154935-2524278.xml.gz", 0, 0);
 
 	write(sims, "output.xml");
 
