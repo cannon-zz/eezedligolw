@@ -17,6 +17,7 @@
  */
 
 
+#include <assert.h>
 #include <complex.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -123,8 +124,9 @@ struct ligolw_array *ligolw_array_parse(ezxml_t elem)
 	}
 
 	for(n = 1, dim = ezxml_child(elem, "Dim"); dim; dim = dim->next) {
-		/* FIXME:  check for failure (extremely unlikely) */
 		array->dims = realloc(array->dims, (array->n_dims + 1) * sizeof(*array->dims));
+		/* not great error handling, but failure is *extremely* unlikely */
+		assert(array->dims != NULL);
 
 		array->dims[array->n_dims].n = strtoll(dim->txt, NULL, 0);
 		n *= array->dims[array->n_dims].n;
