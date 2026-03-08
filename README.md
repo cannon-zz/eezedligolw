@@ -1,31 +1,52 @@
-This is a demo of an alternative to libmetaio based on the ezxml library
-discovered by somebody in the pulsar group, I think Greg Mendell.  In this
-demo, a sim_burst table is parsed into a LAL MetadataTable linked list, and
-then written back to disk using the old LAL routines, thereby demonstrating
-a round-trip disk --> LAL --> disk via ezxml.
+# Overview
 
-To run it, type "make", and you should get a program in examples/ named
-sim_burst_example.  Run that, with no arguments.  It reads the .xml file in
-that directory, extracts the sim_burst table, and writes it to a new file.
+This is an an alternative to libmetaio based on the ezxml library.  The
+advantage this offers over libmetaio is that it can handle the full LIGO
+Light-Weight XML DTD.  For example, in addition to Table elements, which
+libmetaio supports, Array, Param, and Time elements are supported, which
+are enough to allow a PSD file to be read.
 
-ezxml reads the entire document into memory as a string, which poses a
-potential scaling problem, but also makes it trivial to use it with gzipped
-files.  You can either ask ezxml to parse a file by name, or load the file
-first yourself and pass ezxml a pointer to the buffer.  Parsing a gzipped
-xml file is then as simple as reading it with zlib, and then calling ezxml
-on resulting buffer.  (since writing this, LAL has acquired the ability to
-work with gzip'ed files, also).
+As with libmetaio, this library also does not solve the problem of
+providing a comprehensive LIGO Light-Weight XML I/O and document
+manipulation framework.  Nothing at all like the Python ligolw library's
+features are available here.  This library provides a relatively low-level
+framework upon which to write code to extract data from LIGO Light-Weight
+XML documents.  No facility is provided to write data back to disk.
 
-Also, ezxml is happy to work with memory-mapped files, which offers an
-alternative work-around to scaling issues (of course, it's not easy to work
-with a gzipped memory-mapped file).
+## Details
 
-If you've looked at the insides of libmetaio recently, you'll recognize
-that ligolw.h and ligolw.c implement what is essentially the same API.
-Starting with this code, it should take only an afternoon of tinkering to
-have something that emulates enough of the libmetaio API to be used as a
-drop-in replacement within LAL.  But if it was me, I wouldn't work on a
-drop-in replacement, I would port the existing LAL reading codes to this
-thing or some version of it.  Doing that opens the doors to Array I/O, and
-LAL would finally be able to read a PSD ... sigh (I mean, who would've
-thought you'd need to do that, ever).
+Array, Param, Table and Time elements are supported.  See the ezligolw.h
+file for the library's public interface.
+
+Table element trees can be parsed into a generic, inefficient, internal
+representation, or an external row building call-back can be provided to
+store the decoded data into purpose-made data structures provided by the
+calling code.
+
+See the examples/ directory for demonstrations.
+
+ezxml reads the entire document into memory as a string, which typically
+means enough memory is required to store two full copies of the document
+(the text copy ezxml loaded, and the decoded data structures extracted from
+it).
+
+The ezxml API uses plain char types everyhwere, and its unicode support is
+hit and miss.  Assume you cannot use non-ASCII characters if your
+documents.
+
+## ezxml Status
+
+
+ezxml is abandonware, but there are some places where forks of it live that
+have received some updates.  I'll document the ones I know of here to make
+it easier to find them again in the future.
+
+https://github.com/lxfontes/ezxml
+https://github.com/RT-Thread-packages/ezXML
+
+Both of those claim to be version 0.8.5 but 0.8.6 existed before the
+project was abandoned and a snapshot of 0.8.6 is what's in this tree.  It's
+possible those repos, too, are forked from the latest snapshot and just
+haven't updated the version number in their documentation.  I haven't
+bothered doing a comparison of the histories.  The latter has some patches
+that claim to improve unicode support, which might be good to include here.
