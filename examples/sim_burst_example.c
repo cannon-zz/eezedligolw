@@ -100,8 +100,8 @@ static int sim_burst_row_callback(struct ligolw_table *table, struct ligolw_tabl
 	if(result_code)
 		goto unpackerror;
 
-	/* do this after ligolw_unpacking_row_builder() to let it confirm
-	 * the column is present and has the correct type */
+	/* do this after ligolw_table_unpack_row() to let it confirm the
+	 * column is present and has the correct type */
 	strncpy(new->waveform, ligolw_row_get_cell(row, "waveform", NULL).as_string, LIGOMETA_WAVEFORM_MAX - 1);
 	new->waveform[LIGOMETA_WAVEFORM_MAX-1] = '\0';
 
@@ -124,8 +124,8 @@ static int sim_burst_row_callback(struct ligolw_table *table, struct ligolw_tabl
 	if(result_code)
 		goto unpackerror;
 
-	/* add new sim to head of linked list.  yes, this means the table's
-	 * rows get reversed.  so what. */
+	/* add new sim to head of linked list.  the linked list's elements
+	 * are reversed with respect to the file. */
 	new->next = *head;
 	*head = new;
 
@@ -171,7 +171,7 @@ static int XLALTableFromLIGOLw(
 		XLAL_ERROR(XLAL_EIO);
 	}
 
-	/* find the sim_burst table */
+	/* find the table */
 	elem = ligolw_table_get(xmldoc, table_name);
 	if(!elem) {
 		XLALPrintError("unable to locate %s table\n", table_name);
@@ -179,7 +179,7 @@ static int XLALTableFromLIGOLw(
 		XLAL_ERROR(XLAL_EDATA);
 	}
 
-	/* convert the rows into a LAL-style linked list */
+	/* convert the rows to a LAL-style linked list */
 	table = ligolw_table_parse(elem, row_callback, head);
 	if(!table) {
 		XLALPrintError("failure parsing %s table\n", table_name);
