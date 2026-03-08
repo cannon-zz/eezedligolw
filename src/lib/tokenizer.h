@@ -1,7 +1,7 @@
 /*
  * $Id: ezligolw.c,v 1.4 2008/07/31 08:28:42 kipp Exp $
  *
- * Copyright (C) 2007  Kipp Cannon
+ * Copyright (C) 2007,2026  Kipp Cannon
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -19,4 +19,4 @@
  */
 
 
-void ligolw_next_token(char **start, char **end, char **next_start, char delimiter);
+void ligolw_next_token(char **, char **, char **, char);

@@ -156,23 +156,20 @@ struct ligolw_array *ligolw_array_parse(ezxml_t elem)
 
 	for(data = array->data, txt = stream->txt; txt && *txt; data += stride) {
 		union ligolw_cell cell;
-		char *end, *next;
+		char *start, *end;
 
-		ligolw_next_token(&txt, &end, &next, array->delimiter);
+		ligolw_next_token(&txt, &start, &end, array->delimiter);
 
 		/* we have confirmed above that array->type is a numeric
 		 * type, so we don't need to bother null-terminating the
 		 * token before calling _cell_from_txt because parsing will
-		 * automatically stop at the end of the nuber, and also we
+		 * automatically stop at the end of the number, and also we
 		 * know the _to_c() function will not do something weird to
 		 * the contents of the array. */
-		if(!ligolw_cell_from_txt(&cell, array->type, txt) || ligolw_cell_to_c(&cell, array->type, data)) {
+		if(!ligolw_cell_from_txt(&cell, array->type, start) || ligolw_cell_to_c(&cell, array->type, data)) {
 			ligolw_array_free(array);
 			return NULL;
 		}
-
-		/* advance to next token */
-		txt = next;
 	}
 
 	return array;

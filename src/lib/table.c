@@ -160,21 +160,18 @@ struct ligolw_table *ligolw_table_parse(ezxml_t elem, int (row_callback)(struct 
 		row->cells = cells;
 
 		for(c = 0; c < table->n_columns; c++) {
-			char *end, *next;
+			char *start, *end;
 
-			ligolw_next_token(&txt, &end, &next, table->delimiter);
+			ligolw_next_token(&txt, &start, &end, table->delimiter);
 
-			ligolw_cell_from_txt(&cells[c], table->columns[c].type, txt);
+			ligolw_cell_from_txt(&cells[c], table->columns[c].type, start);
 
 			/* null-terminate current token.  this does not
 			 * interfer with the exit test for the loop over
-			 * txt because end and next can only point to the
+			 * txt because end and txt can only point to the
 			 * same address if that address is the end of the
-			 * text */
+			 * stream's text */
 			*end = '\0';
-
-			/* advance to next token */
-			txt = next;
 		}
 
 		/* row_callback takes ownership of row */

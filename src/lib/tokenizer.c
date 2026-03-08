@@ -26,44 +26,44 @@
  */
 
 
-void ligolw_next_token(char **start, char **end, char **next_start, char delimiter)
+void ligolw_next_token(char **txt, char **start, char **end, char delimiter)
 {
 	char *c;
 
-	/* find the token's start */
-	for(c = *start; *c && isspace(*c) && *c != delimiter && *c != '"'; c++);
+	/* find the token's start, the first non-white space, non-delimiter
+	 * character */
+	for(c = *txt; *c && isspace(*c) && *c != delimiter && *c != '"'; c++);
 
-	/* quoted token */
 	if(*c == '"') {
-		/* start at first character next to quote charater '"' */
+		/* quoted token */
+		bool escaped = false;
+
+		/* start is first character after quote charater */
 		*start = ++c;
-		/* end at '\0' or '"' */
-		for(; *c && *c != '"'; c++);
+
+		/* end at '\0' or '"'.  ignore escaped quotes */
+		for(; *c && (*c != '"' || escaped); c++)
+			escaped = (*c == '\\') && !escaped;
 		*end = c;
+
 		/* find the delimiter, this marks the end of current token */
 		if(*c == '"')
 			c++;
 		for(; *c && isspace(*c) && *c != delimiter; c++);
-	}
-	/* token has zero length */
-	else if(!*c || *c == delimiter) {
-		/* at the delimiter, this marks the end of current token */
+	} else if(!*c || *c == delimiter) {
+		/* token has zero length */
 		*start = *end = c;
-	}
-	/* unquoted token */
-	else {
+	} else {
+		/* unquoted token */
 		/* start at first non-white space and non-quote character */
 		*start = c;
 		/* end at space or delimiter or '\0' */
-		for(++c; *c && !isspace(*c) && *c != delimiter; c++);
+		for(c++; *c && !isspace(*c) && *c != delimiter; c++);
 		*end = c;
 		/* find the delimiter, this marks the end of current token */
 		for(; *c && isspace(*c) && *c != delimiter; c++);
 	}
 
-	/* skip the delimiter and white spaces and go to next start */
-	if(*c == delimiter)
-		c++;
-	for(; *c && isspace(*c) && *c != delimiter; c++);
-	*next_start = c;
+	/* next token processing starts after delimiter */
+	*txt = *c == delimiter ? c + 1 : c;
 }
