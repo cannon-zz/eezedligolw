@@ -16,8 +16,13 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <assert.h>
 #include <ctype.h>
 #include <libezligolw/ezligolw.h>
+
+
+#define QUOTE_CHAR	'"'
+#define ESCAPE_CHAR	'\\'
 
 
 /*
@@ -30,40 +35,95 @@ void ligolw_next_token(char **txt, char **start, char **end, char delimiter)
 {
 	char *c;
 
-	/* find the token's start, the first non-white space, non-delimiter
-	 * character */
-	for(c = *txt; *c && isspace(*c) && *c != delimiter && *c != '"'; c++);
+	/* find the token's start, the first non-white space character */
+	for(c = *txt; isspace(*c); c++);
 
-	if(*c == '"') {
+	if(*c == QUOTE_CHAR) {
 		/* quoted token */
-		bool escaped = false;
 
-		/* start is first character after quote charater */
+		/* start is first character after quote charater.  below,
+		 * end will be left pointing to the first character after
+		 * the token, either the terminating quote character or the
+		 * null terminator */
+
 		*start = ++c;
 
-		/* end at '\0' or '"'.  ignore escaped quotes */
-		for(; *c && (*c != '"' || escaped); c++)
-			escaped = (*c == '\\') && !escaped;
-		*end = c;
+		/* find the first escape sequence, an unescaped quote
+		 * character, or the null terminator */
+		for(; *c && *c != ESCAPE_CHAR && *c != QUOTE_CHAR; c++);
 
-		/* find the delimiter, this marks the end of current token */
-		if(*c == '"')
+		if(*c == ESCAPE_CHAR) {
+			/* this quoted token contains escaped special
+			 * characters.  process the remainder of the token
+			 * using escape handling logic */
+
+			char *j = c;
+
+			goto start;
+			for(; *j && *j != QUOTE_CHAR; *(c++) = *(j++)) {
+				/*
+				 * is this character the escape character?
+				 */
+
+				if(*j != ESCAPE_CHAR)
+					continue;
+
+start:
+				/*
+				 * check for an unrecognized escape
+				 * sequence, or an escape sequence starting
+				 * in the last character position.
+				 */
+
+				if(!*(++j)) {
+					/* FIXME:  report incomplete escape
+					 * sequence at end of string error */
+					assert(false);
+				} else if(*j != ESCAPE_CHAR && *j != QUOTE_CHAR) {
+					/* FIXME:  report unrecognized escape
+					 * sequence error */
+				}
+			}
+			/* move the final character, the one that
+			 * terminated the token */
+			*c = *j;
+
+			/* record the end position */
+			*end = c;
+
+			/* continue processing from the original position
+			 * of the token's end */
+			c = j;
+		} else
+			/* no escaped characters encountered.  record the
+			 * end position */
+			*end = c;
+
+		/* skip the quote character (might be at end of buffer, at
+		 * a null terminator, to only check) */
+		if(*c == QUOTE_CHAR)
 			c++;
-		for(; *c && isspace(*c) && *c != delimiter; c++);
-	} else if(!*c || *c == delimiter) {
-		/* token has zero length */
-		*start = *end = c;
 	} else {
 		/* unquoted token */
-		/* start at first non-white space and non-quote character */
+		/* start at first non-white space character */
 		*start = c;
 		/* end at space or delimiter or '\0' */
-		for(c++; *c && !isspace(*c) && *c != delimiter; c++);
+		for(; *c && !isspace(*c) && *c != delimiter; c++);
 		*end = c;
-		/* find the delimiter, this marks the end of current token */
-		for(; *c && isspace(*c) && *c != delimiter; c++);
 	}
 
+	/* advance to what should be the delimiter marking the
+	 * boundary between this and the next tokens */
+	for(; isspace(*c) && *c != delimiter; c++);
+
 	/* next token processing starts after delimiter */
-	*txt = *c == delimiter ? c + 1 : c;
+	if(*c == delimiter)
+		*txt = c + 1;
+	else if(!*c)
+		*txt = c;
+	else {
+		/* FIXME:  expected white space or delimiter following
+		 * token, found something else */
+		assert(false);
+	}
 }
