@@ -33,6 +33,10 @@ AX_CFLAGS_WARN_ALL
 AC_CHECK_HEADER([zlib.h])
 AC_CHECK_LIB([z], [main], , [AC_MSG_ERROR([cannot find the zlib library])])
 
+# Check for libb64 library
+AC_CHECK_HEADER([b64/cdecode.h])
+AC_CHECK_LIB([b64], [main], , [AC_MSG_ERROR([cannot find the b64 library])])
+
 # Check for LAL
 AC_SUBST([MIN_LAL_VERSION], [6.19.0])
 AC_SUBST([MIN_LALMETAIO_VERSION], [2.0.1])
