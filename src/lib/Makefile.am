@@ -8,8 +8,8 @@ libezligolw_la_SOURCES = \
 	param.c \
 	table.c \
 	time.c \
-	tokenizer.h \
-	tokenizer.c \
+	stream.h \
+	stream.c \
 	types.c \
 	../include/libezligolw/ezligolw.h \
 	../ezxml/ezxml.h

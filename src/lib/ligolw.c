@@ -20,7 +20,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <tokenizer.h>
+#include <./stream.h>
 #include <libezligolw/ezligolw.h>
 
 

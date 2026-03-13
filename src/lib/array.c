@@ -22,7 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <tokenizer.h>
+#include <./stream.h>
 #include <libezligolw/ezligolw.h>
 
 
@@ -160,7 +160,7 @@ struct ligolw_array *ligolw_array_parse(ezxml_t elem)
 		union ligolw_cell cell;
 		char *start, *end;
 
-		ligolw_next_token(&txt, &start, &end, array->delimiter);
+		ligolw_stream_next_token(&txt, &start, &end, array->delimiter);
 
 		/* we have confirmed above that array->type is a numeric
 		 * type, so we don't need to bother null-terminating the

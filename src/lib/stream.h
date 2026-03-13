@@ -17,4 +17,4 @@
  */
 
 
-void ligolw_next_token(char **, char **, char **, char);
+void ligolw_stream_next_token(char **, char **, char **, char);

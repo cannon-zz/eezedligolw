@@ -21,7 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <tokenizer.h>
+#include <./stream.h>
 #include <libezligolw/ezligolw.h>
 
 
@@ -162,7 +162,7 @@ struct ligolw_table *ligolw_table_parse(ezxml_t elem, int (row_callback)(struct 
 		for(c = 0; c < table->n_columns; c++) {
 			char *start, *end;
 
-			ligolw_next_token(&txt, &start, &end, table->delimiter);
+			ligolw_stream_next_token(&txt, &start, &end, table->delimiter);
 
 			ligolw_cell_from_txt(&cells[c], table->columns[c].type, start);
 
