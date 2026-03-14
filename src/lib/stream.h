@@ -20,5 +20,20 @@
 #include <libezligolw/ezligolw.h>
 
 
+enum ligolw_stream_encoding {
+	ligolw_stream_enc_Text		= 0x01,
+	ligolw_stream_enc_Binary	= 0x02,
+	ligolw_stream_enc_uuencode	= 0x04,
+	ligolw_stream_enc_base64	= 0x08,
+	ligolw_stream_enc_BigEndian	= 0x10,
+	ligolw_stream_enc_LittleEndian	= 0x20,
+	ligolw_stream_enc_Delimiter	= 0x40,
+	/* the only supported encodings: */
+	ligolw_stream_enc_text		= 0x41,	/* delimted text encoding */
+	ligolw_stream_enc_b64be		= 0x18, /* base64 big endian */
+	ligolw_stream_enc_b64le		= 0x28  /* base64 little endian */
+};
+
 char ligolw_stream_delimiter(ezxml_t);
+enum ligolw_stream_encoding ligolw_stream_check_encoding(ezxml_t stream);
 void ligolw_stream_next_token(char **, char **, char **, char);

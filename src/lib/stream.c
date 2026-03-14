@@ -48,6 +48,125 @@ char ligolw_stream_delimiter(ezxml_t stream)
 
 
 /*
+ * Check that the Stream element's encoding related attributes are set to
+ * allowed values, and report the encoding type enum.  Returns < 0 on
+ * errors, of if the encoding is invalid, or if the encoding is valid but
+ * not supported.  If the encoding is valid and supported, the return value
+ * will be one of the three constants:  ligolw_stream_enc_text (delimited
+ * text), ligolw_stream_enc_b64be (base64 encoded big-endian data), or
+ * ligolw_stream_enc_b64le (base64 encoded little-endian data).
+ */
+
+
+enum ligolw_stream_encoding ligolw_stream_check_encoding(ezxml_t stream)
+{
+	const char *attr;
+	char *encoding;
+	char *state;
+	int encbits;
+	static const struct enckeywords {
+		const char *keyword;
+		enum ligolw_stream_encoding encbit;
+	} keywords[] = {
+		{"Text", ligolw_stream_enc_Text},
+		{"Binary", ligolw_stream_enc_Binary},
+		{"uuencode", ligolw_stream_enc_uuencode},
+		{"base64", ligolw_stream_enc_base64},
+		{"BigEndian", ligolw_stream_enc_BigEndian},
+		{"LittleEndian", ligolw_stream_enc_LittleEndian},
+		{"Delimiter", ligolw_stream_enc_Delimiter},
+		{NULL, 0}
+	};
+
+	/*
+	 * confirm that Type="Local" (also the default value)
+	 */
+
+	attr = ezxml_attr(stream, "Type");
+	if(!attr || !strcmp(attr, "Local")) {
+		/* is default or is "Local" */
+	} else if(!strcmp(attr, "Remote")) {
+		/* Type attribute valid, but not suported */
+		return -1;
+	} else {
+		/* Type attribute set to invalid value */
+		return -1;
+	}
+
+	/*
+	 * confirm that Content is valid if set, but ignore it
+	 */
+
+	attr = ezxml_attr(stream, "Content");
+	if(attr && strcmp(attr, "Typed") && strcmp(attr, "Raw") && strcmp(attr, "MIME")) {
+		/* Content attribute set to invalid value */
+		return -1;
+	}
+
+	/*
+	 * check for and interpret Encoding.  attribute value is
+	 * separated on ',' characters, each piece has leading and trailing
+	 * stripped, and is compared to the list of recognized encoding
+	 * keywords.
+	 *
+	 * the tokenizer is given all the whitespace characters in addition
+	 * to the ',' as a lazy way to strip leading and trailing
+	 * whitespace, but this alters the behaviour so that, for example,
+	 * "aaa, bbb ccc" will be interpreted as the three-keyword sequence
+	 * {"aaa", "bbb", "ccc"} instead of, correctly, as {"aaa", "bbb
+	 * ccc"}.  I think I don't care:  congradulations, your borken file
+	 * tricked the code, and messed up your programme.  sounds like a
+	 * you problem.
+	 */
+
+	attr = ezxml_attr(stream, "Encoding");
+	encoding = strdup(attr ? attr : "Text");
+	encbits = 0;
+	for(attr = strtok_r(encoding, ", \f\n\r\t\v", &state); attr; attr = strtok_r(NULL, ", \f\n\r\t\v", &state)) {
+		const struct enckeywords *keyword;
+		for(keyword = keywords; ; keyword++) {
+			/* if we get to the end of the array without
+			 * recognizing this piece then this Encoding is
+			 * invalid */
+			if(!keyword->keyword) {
+				free(encoding);
+				return -1;
+			}
+			if(!strcmp(attr, keyword->keyword)) {
+				encbits |= keyword->encbit;
+				break;
+			}
+		}
+	}
+	free(encoding);
+
+	/*
+	 * we have a valid encoding.  limit the result to one of the
+	 * supported encodings
+	 */
+
+	switch(encbits) {
+	case ligolw_stream_enc_Delimiter:
+	case ligolw_stream_enc_Text:
+	case ligolw_stream_enc_Text | ligolw_stream_enc_Delimiter:
+		encbits = ligolw_stream_enc_text;
+		break;
+
+	case ligolw_stream_enc_base64 | ligolw_stream_enc_BigEndian:
+	case ligolw_stream_enc_base64 | ligolw_stream_enc_LittleEndian:
+		break;
+
+	default:
+		/* encoding is not supported */
+		encbits = -1;
+		break;
+	}
+
+	return encbits;
+}
+
+
+/*
  * Identify the start and end of the next delimited token in an XML Stream
  * element.  Shared by Table and Array parsing.
  */

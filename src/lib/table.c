@@ -143,6 +143,10 @@ struct ligolw_table *ligolw_table_parse(ezxml_t elem, int (row_callback)(struct 
 		/* FIXME:  handle invalid delimiter */
 	}
 
+	if(ligolw_stream_check_encoding(stream) != ligolw_stream_enc_text) {
+		/* FIXME:  handle invalid or unsupported encoding */
+	}
+
 	if(!row_callback)
 		row_callback = ligolw_table_default_row_callback;
 
