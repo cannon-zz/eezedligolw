@@ -151,9 +151,11 @@ struct ligolw_array *ligolw_array_parse(ezxml_t elem)
 		return NULL;
 	}
 
-	{
-	const char *delim = ezxml_attr(stream, "Delimiter");
-	array->delimiter = delim ? *delim : ',';
+	array->delimiter = ligolw_stream_delimiter(stream);
+	if(array->delimiter < 0) {
+		/* invalid delimiter */
+		ligolw_array_free(array);
+		return NULL;
 	}
 
 	for(data = array->data, txt = stream->txt; txt && *txt; data += stride) {

@@ -17,12 +17,34 @@
  */
 
 #include <assert.h>
+#include <string.h>
 #include <ctype.h>
+#include <./stream.h>
 #include <libezligolw/ezligolw.h>
 
 
 #define QUOTE_CHAR	'"'
 #define ESCAPE_CHAR	'\\'
+
+
+/*
+ * Report the Stream element's delimiter character.  Returns the default
+ * delimiter if one is not set.  Returns < 0 if the delimiter is invalid.
+ * If the XML element is not a Stream element the result is undefined.
+ */
+
+
+char ligolw_stream_delimiter(ezxml_t stream)
+{
+	const char *attr = ezxml_attr(stream, "Delimiter");
+	/* default is ',' */
+	if(!attr)
+		return ',';
+	/* delimiter must be single printable character or space */
+	if(strlen(attr) > 1 || !isprint(*attr))
+		return -1;
+	return *attr;
+}
 
 
 /*

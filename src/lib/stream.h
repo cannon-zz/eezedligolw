@@ -17,4 +17,8 @@
  */
 
 
+#include <libezligolw/ezligolw.h>
+
+
+char ligolw_stream_delimiter(ezxml_t);
 void ligolw_stream_next_token(char **, char **, char **, char);
