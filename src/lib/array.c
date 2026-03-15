@@ -18,10 +18,13 @@
 
 
 #include <assert.h>
+#include <byteswap.h>
 #include <complex.h>
+#include <endian.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <b64/cdecode.h>
 #include <./stream.h>
 #include <libezligolw/ezligolw.h>
 
@@ -98,6 +101,7 @@ struct ligolw_array *ligolw_array_parse(ezxml_t elem)
 	char *data;
 	int stride;
 	int n;
+	enum ligolw_stream_encoding encoding;
 
 	/* this simplifies error checking in calling code */
 	if(!elem)
@@ -158,22 +162,91 @@ struct ligolw_array *ligolw_array_parse(ezxml_t elem)
 		return NULL;
 	}
 
-	for(data = array->data, txt = stream->txt; txt && *txt; data += stride) {
-		union ligolw_cell cell;
-		char *start, *end;
+	switch(encoding = ligolw_stream_check_encoding(stream)) {
+	case ligolw_stream_enc_text:
+		for(data = array->data, txt = stream->txt; txt && *txt; data += stride) {
+			union ligolw_cell cell;
+			char *start, *end;
 
-		ligolw_stream_next_token(&txt, &start, &end, array->delimiter);
+			ligolw_stream_next_token(&txt, &start, &end, array->delimiter);
 
-		/* we have confirmed above that array->type is a numeric
-		 * type, so we don't need to bother null-terminating the
-		 * token before calling _cell_from_txt because parsing will
-		 * automatically stop at the end of the number, and also we
-		 * know the _to_c() function will not do something weird to
-		 * the contents of the array. */
-		if(!ligolw_cell_from_txt(&cell, array->type, start) || ligolw_cell_to_c(&cell, array->type, data)) {
+			/* we have confirmed above that array->type is a numeric
+			 * type, so we don't need to bother null-terminating the
+			 * token before calling _cell_from_txt because parsing will
+			 * automatically stop at the end of the number, and also we
+			 * know the _to_c() function will not do something weird to
+			 * the contents of the array. */
+			if(!ligolw_cell_from_txt(&cell, array->type, start) || ligolw_cell_to_c(&cell, array->type, data)) {
+				ligolw_array_free(array);
+				return NULL;
+			}
+		}
+		break;
+
+	case ligolw_stream_enc_b64be:
+	case ligolw_stream_enc_b64le: {
+		base64_decodestate b64state;
+		base64_init_decodestate(&b64state);
+		/* decode the base64 data */
+		if(base64_decode_block(stream->txt, strlen(stream->txt), array->data, &b64state) != n * stride) {
+			/* decoded size did not match array size.  we might
+			 * have corrupted memory, but other than try to
+			 * clean up and return an error code there's not
+			 * much we can do */
 			ligolw_array_free(array);
 			return NULL;
 		}
+		/* correct the endianness */
+		if(__BYTE_ORDER != ((encoding & ligolw_stream_enc_LittleEndian) ? __LITTLE_ENDIAN : __BIG_ENDIAN)) {
+			int i;
+			switch(array->type) {
+			case ligolw_cell_type_int_2s:
+			case ligolw_cell_type_int_2u:
+				for(i = 0; i < n; i++)
+					((uint16_t *) array->data)[i] = bswap_16(((uint16_t *) array->data)[i]);
+				break;
+
+			case ligolw_cell_type_int_4s:
+			case ligolw_cell_type_int_4u:
+			case ligolw_cell_type_real_4:
+				for(i = 0; i < n; i++)
+					((uint32_t *) array->data)[i] = bswap_32(((uint32_t *) array->data)[i]);
+				break;
+
+			case ligolw_cell_type_int_8s:
+			case ligolw_cell_type_int_8u:
+			case ligolw_cell_type_real_8:
+				for(i = 0; i < n; i++)
+					((uint64_t *) array->data)[i] = bswap_64(((uint64_t *) array->data)[i]);
+				break;
+
+			case ligolw_cell_type_complex_8:
+				/* single precision complex numbers are pairs of 4
+				 * byte numbers, not single 8 byte numbers */
+				for(i = 0; i < 2 * n; i++)
+					((uint32_t *) array->data)[i] = bswap_32(((uint32_t *) array->data)[i]);
+				break;
+
+			case ligolw_cell_type_complex_16:
+				/* double precision complex numbers are pairs of 8
+				 * byte numbers, not single 16 byte numbers */
+				for(i = 0; i < 2 * n; i++)
+					((uint64_t *) array->data)[i] = bswap_64(((uint64_t *) array->data)[i]);
+				break;
+
+			default:
+				/* should not get here:  we confirmed the Stream
+				 * contains one of the above numeric types */
+				ligolw_array_free(array);
+				return NULL;
+			}
+		}
+		break;
+	}
+
+	default:
+		ligolw_array_free(array);
+		return NULL;
 	}
 
 	return array;
