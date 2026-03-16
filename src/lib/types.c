@@ -208,9 +208,21 @@ char *ligolw_cell_to_txt(union ligolw_cell cell, enum ligolw_cell_type type)
 	case ligolw_cell_type_lstring:
 		/* FIXME: binary types need to pass through
 		 * encoders first */
-		/* FIXME: string types need to pass through
-		 * encoders first */
-		asprintf(&dst, "\"%s\"", cell.as_string);
+		if(cell.as_string) {
+			int n_escapes;
+			char *i;
+			const char *j;
+			for(n_escapes = 0, j = cell.as_string; *j; j++)
+				n_escapes += (*j == '"') || (*j == '\\');
+			i = dst = malloc((j - cell.as_string) + n_escapes + 3);
+			*i++ = '"';
+			for(j = cell.as_string; *j; *i++ = *j++)
+				if((*j == '"') || (*j == '\\'))
+					*i++ = '\\';
+			*i++ = '"';
+			*i = 0;
+		} else
+			dst = strdup("");
 		break;
 
 	case ligolw_cell_type_int_2s:
