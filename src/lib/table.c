@@ -17,6 +17,7 @@
  */
 
 
+#include <assert.h>
 #include <complex.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -190,17 +191,33 @@ struct ligolw_table *ligolw_table_parse(ezxml_t elem, int (row_callback)(struct 
 
 
 /*
+ * Free the data for one row of a struct ligolw_table.  If the row object
+ * must also be free()'ed the calling code must do that.
+ */
+
+
+void ligolw_table_free_row_data(struct ligolw_table *table, struct ligolw_table_row *row)
+{
+	if(!row)
+		return;
+	assert(table);
+	free(row->cells);
+	/* for safety */
+	row->cells = NULL;
+}
+
+
+/*
  * Free a struct ligolw_table.
  */
 
 
 void ligolw_table_free(struct ligolw_table *table)
 {
-
 	if(table) {
 		int i;
 		for(i = 0; i < table->n_rows; i++)
-			free(table->rows[i].cells);
+			ligolw_table_free_row_data(table, &table->rows[i]);
 		free(table->rows);
 		free(table->columns);
 	}

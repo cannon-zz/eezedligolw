@@ -130,7 +130,7 @@ static int sim_burst_row_callback(struct ligolw_table *table, struct ligolw_tabl
 	*head = new;
 
 	/* success */
-	free(row->cells);
+	ligolw_table_free_row_data(table, row);
 	free(row);
 	return 0;
 
@@ -144,7 +144,7 @@ unpackerror:
 	}
 error:
 	free(new);
-	free(row->cells);
+	ligolw_table_free_row_data(table, row);
 	free(row);
 	return -1;
 }

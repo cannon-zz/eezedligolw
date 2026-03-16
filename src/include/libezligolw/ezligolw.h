@@ -108,6 +108,7 @@ void ligolw_array_free(struct ligolw_array *);
 int ligolw_table_default_row_callback(struct ligolw_table *, struct ligolw_table_row *, void *);
 ezxml_t ligolw_table_get(ezxml_t, const char *);
 struct ligolw_table *ligolw_table_parse(ezxml_t, int (*)(struct ligolw_table *, struct ligolw_table_row *, void *), void *);
+void ligolw_table_free_row_data(struct ligolw_table *, struct ligolw_table_row *);
 void ligolw_table_free(struct ligolw_table *);
 int ligolw_table_get_column(struct ligolw_table *, const char *, enum ligolw_cell_type *);
 int ligolw_table_print(FILE *, struct ligolw_table *);
