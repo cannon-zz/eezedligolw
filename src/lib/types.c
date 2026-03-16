@@ -182,22 +182,23 @@ union ligolw_cell *ligolw_cell_from_txt(union ligolw_cell *cell, enum ligolw_cel
 
 
 /*
- * Print the contents of the a union ligolw_cell object to a string encoded
- * following the LIGO Light-Weight XML convention.  The result is suitable
- * for printing into a Table element, or Array element.  Probably
- * reasonable to use it for a Param element, also, but be aware of the
- * confusion surrounding quoting of strings in Param elements.
+ * Print the contents of the a union ligolw_cell object to a newly
+ * allocated string encoded following the LIGO Light-Weight XML convention.
+ * The result is suitable for printing into a Table element, or Array
+ * element.  Probably reasonable to use it for a Param element, also, but
+ * be aware of the confusion surrounding quoting of strings in Param
+ * elements.
  *
- * sprintf() is used to print the value to the text buffer pointed to by
- * dst, which must be large enough to hold the result and a null
- * terminator.  If dst is NULL then a new buffer will be allocated using
- * asprintf().  The return value is dst, or the address of the newly
- * allocated buffer if dst is NULL, or NULL if an error occurs.
+ * The return value is the address of a newly allocated buffer (which the
+ * calling code must free when finished with it), or NULL if an error
+ * occurs.
  */
 
 
-char *ligolw_cell_to_txt(char *dst, union ligolw_cell cell, enum ligolw_cell_type type)
+char *ligolw_cell_to_txt(union ligolw_cell cell, enum ligolw_cell_type type)
 {
+	char *dst = NULL;
+
 	switch(type) {
 	case ligolw_cell_type_char_s:
 	case ligolw_cell_type_char_v:
@@ -209,59 +210,38 @@ char *ligolw_cell_to_txt(char *dst, union ligolw_cell cell, enum ligolw_cell_typ
 		 * encoders first */
 		/* FIXME: string types need to pass through
 		 * encoders first */
-		if(dst)
-			sprintf(dst, "\"%s\"", cell.as_string);
-		else
-			asprintf(&dst, "\"%s\"", cell.as_string);
+		asprintf(&dst, "\"%s\"", cell.as_string);
 		break;
 
 	case ligolw_cell_type_int_2s:
 	case ligolw_cell_type_int_4s:
 	case ligolw_cell_type_int_8s:
-		if(dst)
-			sprintf(dst, "%lld", (long long) cell.as_int);
-		else
-			asprintf(&dst, "%lld", (long long) cell.as_int);
+		asprintf(&dst, "%lld", (long long) cell.as_int);
 		break;
 
 	case ligolw_cell_type_int_2u:
 	case ligolw_cell_type_int_4u:
 	case ligolw_cell_type_int_8u:
-		if(dst)
-			sprintf(dst, "%llu", (unsigned long long) cell.as_uint);
-		else
-			asprintf(&dst, "%llu", (unsigned long long) cell.as_uint);
+		asprintf(&dst, "%llu", (unsigned long long) cell.as_uint);
 		break;
 
 	case ligolw_cell_type_real_4:
-		if(dst)
-			sprintf(dst, "%.7g", cell.as_double);
-		else
-			asprintf(&dst, "%.7g", cell.as_double);
+		asprintf(&dst, "%.7g", cell.as_double);
 		break;
 
 	case ligolw_cell_type_real_8:
-		if(dst)
-			sprintf(dst, "%.16g", cell.as_double);
-		else
-			asprintf(&dst, "%.16g", cell.as_double);
+		asprintf(&dst, "%.16g", cell.as_double);
 		break;
 
 	case ligolw_cell_type_complex_8: {
 		double complex x = cell.as_double_complex;
-		if(dst)
-			sprintf(dst, "%.7g+i%.7g", creal(x), cimag(x));
-		else
-			asprintf(&dst, "%.7g+i%.7g", creal(x), cimag(x));
+		asprintf(&dst, "%.7g+i%.7g", creal(x), cimag(x));
 		break;
 	}
 
 	case ligolw_cell_type_complex_16: {
 		double complex x = cell.as_double_complex;
-		if(dst)
-			sprintf(dst, "%.16g+i%.16g", creal(x), cimag(x));
-		else
-			asprintf(&dst, "%.16g+i%.16g", creal(x), cimag(x));
+		asprintf(&dst, "%.16g+i%.16g", creal(x), cimag(x));
 		break;
 	}
 

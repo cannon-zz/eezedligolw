@@ -324,7 +324,7 @@ int ligolw_table_print(FILE *f, struct ligolw_table *table)
 		else
 			fprintf(f, "\t\t");
 		for(c = 0; c < table->n_columns; c++) {
-			char *buf = ligolw_cell_to_txt(NULL, table->rows[r].cells[c], table->columns[c].type);
+			char *buf = ligolw_cell_to_txt(table->rows[r].cells[c], table->columns[c].type);
 			if(c)
 				fprintf(f, "%c", table->delimiter);
 			fputs(buf, f);
