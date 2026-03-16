@@ -18,7 +18,7 @@
 
 
 #include <string.h>
-#include <libezligolw/ezligolw.h>
+#include <ezligolw/ezligolw.h>
 
 
 /*

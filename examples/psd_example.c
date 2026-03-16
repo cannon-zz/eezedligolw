@@ -24,7 +24,7 @@
 #include <lal/LALList.h>
 #include <lal/Units.h>
 #include <lal/XLALError.h>
-#include <libezligolw/ezligolw.h>
+#include <ezligolw/ezligolw.h>
 
 
 /*

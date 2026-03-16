@@ -20,7 +20,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <./stream.h>
-#include <libezligolw/ezligolw.h>
+#include <ezligolw/ezligolw.h>
 
 
 #define QUOTE_CHAR	'"'

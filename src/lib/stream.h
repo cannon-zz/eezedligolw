@@ -17,7 +17,7 @@
  */
 
 
-#include <libezligolw/ezligolw.h>
+#include <ezligolw/ezligolw.h>
 
 
 enum ligolw_stream_encoding {

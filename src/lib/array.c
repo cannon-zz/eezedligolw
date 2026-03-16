@@ -26,7 +26,7 @@
 #include <string.h>
 #include <b64/cdecode.h>
 #include <./stream.h>
-#include <libezligolw/ezligolw.h>
+#include <ezligolw/ezligolw.h>
 
 
 /*

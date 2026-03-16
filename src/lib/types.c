@@ -21,7 +21,7 @@
 #include <string.h>
 #include <b64/cdecode.h>
 #include <b64/cencode.h>
-#include <libezligolw/ezligolw.h>
+#include <ezligolw/ezligolw.h>
 
 
 /*

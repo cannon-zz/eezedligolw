@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <./stream.h>
-#include <libezligolw/ezligolw.h>
+#include <ezligolw/ezligolw.h>
 
 
 /*

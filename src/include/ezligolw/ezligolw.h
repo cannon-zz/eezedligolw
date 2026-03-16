@@ -20,7 +20,7 @@
 #include <complex.h>
 #include <stdio.h>
 #include <stdint.h>
-#include <libezligolw/ezxml.h>
+#include <ezligolw/ezxml.h>
 
 
 enum ligolw_cell_type {

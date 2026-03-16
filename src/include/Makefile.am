@@ -1,1 +1,1 @@
-SUBDIRS = libezligolw
+SUBDIRS = ezligolw

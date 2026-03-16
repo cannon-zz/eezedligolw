@@ -27,7 +27,7 @@ gnuscripts/ltsugar.m4
 gnuscripts/ltversion.m4
 gnuscripts/missing
 gnuscripts/test-driver
-libezligolw.pc
+ezligolw.pc
 libtool
 Makefile
 Makefile.in
