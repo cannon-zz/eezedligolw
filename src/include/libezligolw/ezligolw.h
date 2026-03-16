@@ -50,7 +50,7 @@ union ligolw_cell {
 	/* the cell object owns this data, it must be free()'ed when the
 	 * cell is no longer in use */
 	char *as_string;
-	unsigned char *as_blob;
+	void *as_blob;
 };
 
 

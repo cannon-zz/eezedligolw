@@ -149,7 +149,7 @@ union ligolw_cell *ligolw_cell_from_txt(union ligolw_cell *cell, enum ligolw_cel
 		base64_decodestate b64state;
 		base64_init_decodestate(&b64state);
 		cell->as_blob = malloc(n /*FIXME: base64_decode_maxlength(n)*/);
-		base64_decode_block(txt, n, (char *) cell->as_blob, &b64state);
+		base64_decode_block(txt, n, cell->as_blob, &b64state);
 		break;
 	}
 
@@ -239,7 +239,7 @@ char *ligolw_cell_to_txt(union ligolw_cell cell, enum ligolw_cell_type type)
 			base64_init_encodestate(&b64state);
 			c = dst = malloc(0 /*FIXME: base64_encode_length(n, &b64state)*/ + 3);
 			*c++ = '"';
-			c += base64_encode_block((char *) cell.as_blob, n, c, &b64state);
+			c += base64_encode_block(cell.as_blob, n, c, &b64state);
 			c += base64_encode_blockend(c, &b64state);
 			*c++ = '"';
 			*c = 0;
@@ -316,7 +316,7 @@ int ligolw_cell_to_c(union ligolw_cell *cell, enum ligolw_cell_type type, void *
 		break;
 
 	case ligolw_cell_type_blob:
-		*(unsigned char **) dest = cell->as_blob;
+		*(void **) dest = cell->as_blob;
 		cell->as_blob = NULL;
 		break;
 
