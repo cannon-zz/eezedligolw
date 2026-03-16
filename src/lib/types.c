@@ -19,6 +19,8 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <b64/cdecode.h>
+#include <b64/cencode.h>
 #include <libezligolw/ezligolw.h>
 
 
@@ -138,12 +140,18 @@ union ligolw_cell *ligolw_cell_from_txt(union ligolw_cell *cell, enum ligolw_cel
 	case ligolw_cell_type_char_v:
 	case ligolw_cell_type_ilwdchar:
 	case ligolw_cell_type_ilwdchar_u:
-	case ligolw_cell_type_blob:
 	case ligolw_cell_type_lstring:
-		/* FIXME: binary types need to be sent
-		 * through a decoder following this */
 		cell->as_string = strdup(txt);
 		break;
+
+	case ligolw_cell_type_blob: {
+		size_t n = strlen(txt);
+		base64_decodestate b64state;
+		base64_init_decodestate(&b64state);
+		cell->as_blob = malloc(n /*FIXME: base64_decode_maxlength(n)*/);
+		base64_decode_block(txt, n, (char *) cell->as_blob, &b64state);
+		break;
+	}
 
 	case ligolw_cell_type_int_2s:
 	case ligolw_cell_type_int_4s:
@@ -205,10 +213,7 @@ char *ligolw_cell_to_txt(union ligolw_cell cell, enum ligolw_cell_type type)
 	case ligolw_cell_type_char_v:
 	case ligolw_cell_type_ilwdchar:
 	case ligolw_cell_type_ilwdchar_u:
-	case ligolw_cell_type_blob:
 	case ligolw_cell_type_lstring:
-		/* FIXME: binary types need to pass through
-		 * encoders first */
 		if(cell.as_string) {
 			int n_escapes;
 			char *i;
@@ -222,6 +227,22 @@ char *ligolw_cell_to_txt(union ligolw_cell cell, enum ligolw_cell_type type)
 					*i++ = '\\';
 			*i++ = '"';
 			*i = 0;
+		} else
+			dst = strdup("");
+		break;
+
+	case ligolw_cell_type_blob:
+		if(cell.as_blob) {
+			size_t n = 0 /* FIXME:  size of blob data */;
+			char *c;
+			base64_encodestate b64state;
+			base64_init_encodestate(&b64state);
+			c = dst = malloc(0 /*FIXME: base64_encode_length(n, &b64state)*/ + 3);
+			*c++ = '"';
+			c += base64_encode_block((char *) cell.as_blob, n, c, &b64state);
+			c += base64_encode_blockend(c, &b64state);
+			*c++ = '"';
+			*c = 0;
 		} else
 			dst = strdup("");
 		break;
