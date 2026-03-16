@@ -40,52 +40,52 @@ static int sim_burst_row_callback(struct ligolw_table *table, struct ligolw_tabl
 	union ligolw_cell *str;
 	struct ligolw_unpacking_spec *spec;
 	struct ligolw_unpacking_spec sim_burst_basic[] = {
-		{&new->process_id, "process:process_id", ligolw_cell_type_int_8s, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{NULL, "waveform", ligolw_cell_type_lstring, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{&new->ra, "ra", ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{&new->dec, "dec", ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{&new->psi, "psi", ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{&new->time_geocent_gps.gpsSeconds, "time_geocent_gps", ligolw_cell_type_int_4s, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{&new->time_geocent_gps.gpsNanoSeconds, "time_geocent_gps_ns", ligolw_cell_type_int_4s, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{&new->time_geocent_gmst, "time_geocent_gmst", ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{&new->time_slide_id, "time_slide:time_slide_id", ligolw_cell_type_int_8s, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{&new->simulation_id, "simulation_id", ligolw_cell_type_int_8s, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{NULL, NULL, -1, 0}
+		{"process:process_id", &new->process_id, NULL, ligolw_cell_type_int_8s, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{"waveform", NULL, NULL, ligolw_cell_type_lstring, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{"ra", &new->ra, NULL, ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{"dec", &new->dec, NULL, ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{"psi", &new->psi, NULL, ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{"time_geocent_gps", &new->time_geocent_gps.gpsSeconds, NULL, ligolw_cell_type_int_4s, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{"time_geocent_gps_ns", &new->time_geocent_gps.gpsNanoSeconds, NULL, ligolw_cell_type_int_4s, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{"time_geocent_gmst", &new->time_geocent_gmst, NULL, ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{"time_slide:time_slide_id", &new->time_slide_id, NULL, ligolw_cell_type_int_8s, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{"simulation_id", &new->simulation_id, NULL, ligolw_cell_type_int_8s, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{NULL, NULL, NULL, -1, 0}
 	};
 	struct ligolw_unpacking_spec sim_burst_StringCusp[] = {
-		{&new->duration, "duration", ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{&new->frequency, "frequency", ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{&new->amplitude, "amplitude", ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{NULL, NULL, -1, 0}
+		{"duration", &new->duration, NULL, ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{"frequency", &new->frequency, NULL, ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{"amplitude", &new->amplitude, NULL, ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{NULL, NULL, NULL, -1, 0}
 	};
 	struct ligolw_unpacking_spec sim_burst_SineGaussian[] = {
-		{&new->duration, "duration", ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{&new->frequency, "frequency", ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{&new->bandwidth, "bandwidth", ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{&new->q, "q", ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{&new->pol_ellipse_angle, "pol_ellipse_angle", ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{&new->pol_ellipse_e, "pol_ellipse_e", ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{&new->hrss, "hrss", ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{NULL, NULL, -1, 0}
+		{"duration", &new->duration, NULL, ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{"frequency", &new->frequency, NULL, ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{"bandwidth", &new->bandwidth, NULL, ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{"q", &new->q, NULL, ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{"pol_ellipse_angle", &new->pol_ellipse_angle, NULL, ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{"pol_ellipse_e", &new->pol_ellipse_e, NULL, ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{"hrss", &new->hrss, NULL, ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{NULL, NULL, NULL, -1, 0}
 	};
 	struct ligolw_unpacking_spec sim_burst_Gaussian[] = {
-		{&new->duration, "duration", ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{&new->hrss, "hrss", ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{NULL, NULL, -1, 0}
+		{"duration", &new->duration, NULL, ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{"hrss", &new->hrss, NULL, ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{NULL, NULL, NULL, -1, 0}
 	};
 	struct ligolw_unpacking_spec sim_burst_BTLWNB[] = {
-		{&new->duration, "duration", ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{&new->frequency, "frequency", ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{&new->bandwidth, "bandwidth", ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{&new->pol_ellipse_angle, "pol_ellipse_angle", ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{&new->pol_ellipse_e, "pol_ellipse_e", ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{&new->egw_over_rsquared, "egw_over_rsquared", ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{&new->waveform_number, "waveform_number", ligolw_cell_type_int_8u, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{NULL, NULL, -1, 0}
+		{"duration", &new->duration, NULL, ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{"frequency", &new->frequency, NULL, ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{"bandwidth", &new->bandwidth, NULL, ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{"pol_ellipse_angle", &new->pol_ellipse_angle, NULL, ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{"pol_ellipse_e", &new->pol_ellipse_e, NULL, ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{"egw_over_rsquared", &new->egw_over_rsquared, NULL, ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{"waveform_number", &new->waveform_number, NULL, ligolw_cell_type_int_8u, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{NULL, NULL, NULL, -1, 0}
 	};
 	struct ligolw_unpacking_spec sim_burst_Impulse[] = {
-		{&new->amplitude, "amplitude", ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		{NULL, NULL, -1, 0}
+		{"amplitude", &new->amplitude, NULL, ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{NULL, NULL, NULL, -1, 0}
 	};
 
 	/* check for memory allocation failure.  remember to clean up row's

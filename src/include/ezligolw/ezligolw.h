@@ -121,8 +121,9 @@ union ligolw_cell *ligolw_row_get_cell(const struct ligolw_table_row *, const ch
 
 
 struct ligolw_unpacking_spec {
-	void *dest;
 	const char *name;
+	void *dest;
+	size_t *dest_size;
 	enum ligolw_cell_type type;
 	enum ligolw_column_flags {
 		LIGOLW_COLUMN_FLAGS_NONE	= 0x00,

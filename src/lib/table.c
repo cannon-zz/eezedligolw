@@ -319,6 +319,7 @@ int ligolw_table_unpack_row(struct ligolw_table *table, struct ligolw_table_row 
 	for(spec = data; spec->name; spec++) {
 		enum ligolw_cell_type type;
 		int c = ligolw_table_get_column(table, spec->name, &type);
+		int size;
 		if(c < 0) {
 			/* no column by that name */
 			if(!(spec->flags & LIGOLW_COLUMN_FLAGS_REQUIRED))
@@ -336,11 +337,12 @@ int ligolw_table_unpack_row(struct ligolw_table *table, struct ligolw_table_row 
 			 * but is ignored */
 			continue;
 
-		/* FIXME:  for blobs, we loose track of the size */
-		if(ligolw_cell_to_c(&row.cells[c], spec->type, spec->dest) < 0) {
+		if((size = ligolw_cell_to_c(&row.cells[c], spec->type, spec->dest)) < 0) {
 			/* spec provided an invalid type */
 			return -(spec - data + 1);
 		}
+		if(spec->dest_size)
+			*spec->dest_size = size;
 	}
 
 	return 0;
