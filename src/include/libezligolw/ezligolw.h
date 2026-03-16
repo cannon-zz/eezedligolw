@@ -124,7 +124,7 @@ struct ligolw_unpacking_spec {
 	} flags;
 };
 
-int ligolw_table_unpack_row(struct ligolw_table *, struct ligolw_table_row, void *);
+int ligolw_table_unpack_row(struct ligolw_table *, struct ligolw_table_row, struct ligolw_unpacking_spec *);
 
 const char *ligolw_time_parse(ezxml_t, const char **);
 ezxml_t ligolw_time_get(ezxml_t, const char *);

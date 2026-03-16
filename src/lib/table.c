@@ -258,9 +258,9 @@ ezxml_t ligolw_table_get(ezxml_t elem, const char *name)
  */
 
 
-int ligolw_table_unpack_row(struct ligolw_table *table, struct ligolw_table_row row, void *data)
+int ligolw_table_unpack_row(struct ligolw_table *table, struct ligolw_table_row row, struct ligolw_unpacking_spec *spec)
 {
-	struct ligolw_unpacking_spec *spec;
+	struct ligolw_unpacking_spec *data = spec;
 
 	for(spec = data; spec->name; spec++) {
 		enum ligolw_cell_type type;
@@ -271,11 +271,11 @@ int ligolw_table_unpack_row(struct ligolw_table *table, struct ligolw_table_row 
 				/* not required */
 				continue;
 			/* missing column is required */
-			return spec - (struct ligolw_unpacking_spec *) data + 1;
+			return spec - data + 1;
 		}
 		if(spec->type != type) {
 			/* type mismatch */
-			return -(spec - (struct ligolw_unpacking_spec *) data + 1);
+			return -(spec - data + 1);
 		}
 		if(!spec->dest)
 			/* column has a valid name and the correct type,
@@ -284,7 +284,7 @@ int ligolw_table_unpack_row(struct ligolw_table *table, struct ligolw_table_row 
 
 		if(ligolw_cell_to_c(&row.cells[c], spec->type, spec->dest)) {
 			/* spec provided an invalid type */
-			return -(spec - (struct ligolw_unpacking_spec *) data + 1);
+			return -(spec - data + 1);
 		}
 	}
 
