@@ -148,8 +148,9 @@ union ligolw_cell *ligolw_cell_from_txt(union ligolw_cell *cell, enum ligolw_cel
 		size_t n = strlen(txt);
 		base64_decodestate b64state;
 		base64_init_decodestate(&b64state);
-		cell->as_blob = malloc(n /*FIXME: base64_decode_maxlength(n)*/);
-		base64_decode_block(txt, n, cell->as_blob, &b64state);
+		cell->as_blob.len = n; /*FIXME: base64_decode_maxlength(n)*/
+		cell->as_blob.data = malloc(cell->as_blob.len);
+		base64_decode_block(txt, n, cell->as_blob.data, &b64state);
 		break;
 	}
 
@@ -232,14 +233,13 @@ char *ligolw_cell_to_txt(union ligolw_cell cell, enum ligolw_cell_type type)
 		break;
 
 	case ligolw_cell_type_blob:
-		if(cell.as_blob) {
-			size_t n = 0 /* FIXME:  size of blob data */;
+		if(cell.as_blob.data) {
 			char *c;
 			base64_encodestate b64state;
 			base64_init_encodestate(&b64state);
-			c = dst = malloc(0 /*FIXME: base64_encode_length(n, &b64state)*/ + 3);
+			c = dst = malloc(2 * cell.as_blob.len /*FIXME: base64_encode_length(n, &b64state)*/ + 3);
 			*c++ = '"';
-			c += base64_encode_block(cell.as_blob, n, c, &b64state);
+			c += base64_encode_block(cell.as_blob.data, cell.as_blob.len, c, &b64state);
 			c += base64_encode_blockend(c, &b64state);
 			*c++ = '"';
 			*c = 0;
@@ -291,15 +291,17 @@ char *ligolw_cell_to_txt(union ligolw_cell cell, enum ligolw_cell_type type)
 /*
  * Assign a union ligolw_cell's contents to a C variable.  dest must point
  * to the location of a C type maching the type of the cell's contents.
- * returns 0 on success, -1 on failure.
+ * Returns < 0 on failure, or the size of the data in bytes on success.
+ * For blob the size of the allocated data is returned, for strings the
+ * size of the pointer is returned.
  *
  * This function takes ownership of the ligolw_cell's data, and transfers
  * that ownership to the C variable.  For numeric types this has no
  * meaning, but for pointer types, strings and blobs, after this function
- * call the calling code must not free() the ligolw_cell's data, but is
- * required to free() the C pointer destination when finished with it.  To
- * reduce the risk of errors, the cell's data pointer is set to NULL, so it
- * is safe for calling code to call free() on the cell's pointer.
+ * call the calling code is required to free() the C pointer destination
+ * when finished with it.  To reduce the risk of errors, the cell's data
+ * pointer is set to NULL.  It is safe for calling code to call free() on
+ * the cell's pointer, but doing so has no effect on allocated memory.
  */
 
 
@@ -313,57 +315,55 @@ int ligolw_cell_to_c(union ligolw_cell *cell, enum ligolw_cell_type type, void *
 	case ligolw_cell_type_lstring:
 		*(char **) dest = cell->as_string;
 		cell->as_string = NULL;
-		break;
+		return sizeof(char *);
 
 	case ligolw_cell_type_blob:
-		*(void **) dest = cell->as_blob;
-		cell->as_blob = NULL;
-		break;
+		*(void **) dest = cell->as_blob.data;
+		cell->as_blob.data = NULL;
+		return cell->as_blob.len;
 
 	case ligolw_cell_type_int_2s:
 		*(int16_t *) dest = cell->as_int;
-		break;
+		return 2;
 
 	case ligolw_cell_type_int_2u:
 		*(uint16_t *) dest = cell->as_uint;
-		break;
+		return 2;
 
 	case ligolw_cell_type_int_4s:
 		*(int32_t *) dest = cell->as_int;
-		break;
+		return 4;
 
 	case ligolw_cell_type_int_4u:
 		*(uint32_t *) dest = cell->as_uint;
-		break;
+		return 4;
 
 	case ligolw_cell_type_int_8s:
 		*(int64_t *) dest = cell->as_int;
-		break;
+		return 8;
 
 	case ligolw_cell_type_int_8u:
 		*(uint64_t *) dest = cell->as_uint;
-		break;
+		return 8;
 
 	case ligolw_cell_type_real_4:
 		*(float *) dest = cell->as_double;
-		break;
+		return 4;
 
 	case ligolw_cell_type_real_8:
 		*(double *) dest = cell->as_double;
-		break;
+		return 8;
 
 	case ligolw_cell_type_complex_8:
 		*(float complex *) dest = cell->as_double_complex;
-		break;
+		return 8;
 
 	case ligolw_cell_type_complex_16:
 		*(double complex *) dest = cell->as_double_complex;
-		break;
+		return 16;
 
 	default:
 		/* unrecognized type */
 		return -1;
 	}
-
-	return 0;
 }

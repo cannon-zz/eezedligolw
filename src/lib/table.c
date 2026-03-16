@@ -217,7 +217,7 @@ void ligolw_table_free_row_data(struct ligolw_table *table, struct ligolw_table_
 			break;
 
 		case ligolw_cell_type_blob:
-			free(row->cells[c].as_blob);
+			free(row->cells[c].as_blob.data);
 			break;
 
 		default:
@@ -336,7 +336,8 @@ int ligolw_table_unpack_row(struct ligolw_table *table, struct ligolw_table_row 
 			 * but is ignored */
 			continue;
 
-		if(ligolw_cell_to_c(&row.cells[c], spec->type, spec->dest)) {
+		/* FIXME:  for blobs, we loose track of the size */
+		if(ligolw_cell_to_c(&row.cells[c], spec->type, spec->dest) < 0) {
 			/* spec provided an invalid type */
 			return -(spec - data + 1);
 		}

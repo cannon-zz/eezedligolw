@@ -177,7 +177,7 @@ struct ligolw_array *ligolw_array_parse(ezxml_t elem)
 			 * automatically stop at the end of the number.  we
 			 * also know we will not be given ownership of a
 			 * string or blob pointer that requires free(). */
-			if(!ligolw_cell_from_txt(&cell, array->type, start) || ligolw_cell_to_c(&cell, array->type, data)) {
+			if(!ligolw_cell_from_txt(&cell, array->type, start) || ligolw_cell_to_c(&cell, array->type, data) < 0) {
 				ligolw_array_free(array);
 				return NULL;
 			}

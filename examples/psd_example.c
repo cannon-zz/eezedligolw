@@ -189,7 +189,7 @@ LALDict *XLALPSDsFromLIGOLw(
 	for(elem = ligolw_REAL8FrequencySeries_iter(xmldoc); elem; elem = ligolw_REAL8FrequencySeries_next(elem)) {
 		REAL8FrequencySeries *series = ligolw_REAL8FrequencySeries_parse(elem);
 		const char *instrument;
-		if(!series || ligolw_param_get_as_c(ligolw_param_get(elem, "instrument"), &instrument, ligolw_cell_type_lstring)) {
+		if(!series || ligolw_param_get_as_c(ligolw_param_get(elem, "instrument"), &instrument, ligolw_cell_type_lstring) < 0) {
 			XLAL_PRINT_ERROR("failure parsing PSD");
 			XLALDestroyDict(psds);
 			XLAL_ERROR_NULL(XLAL_EDATA);

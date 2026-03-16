@@ -61,10 +61,16 @@ ezxml_t ligolw_param_get(ezxml_t elem, const char *name)
 
 /*
  * Utility for common case of retrieving a parameter value whose type is
- * known.  The value, whose type must be type, is written to the address in
- * dst, which must be large enough to store the value.  The return value is
- * 0 on success, or != 0 on failure, for example if the requested type does
- * not match the Param element's type.
+ * known.  The value, whose type must match that of the type argument, is
+ * written to the address in dst, which must be large enough to store the
+ * value.  The return value is < 0 on failure, or the size of the data in
+ * bytes.  For blob type the reported size is the size of the decoded
+ * memory buffer, for all other types it is the size of the variable (the
+ * size of a pointer in the case of strings).
+ *
+ * For string and blob types, dst must be the address of a pointer that
+ * will be set to the address of the decoded data.  It is a copy of the
+ * contents, the calling code owns it and must free() it when done.
  */
 
 
