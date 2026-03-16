@@ -108,6 +108,10 @@ static int sim_burst_row_callback(struct ligolw_table *table, struct ligolw_tabl
 	str = ligolw_row_get_cell(row, "waveform", NULL);
 	strncpy(new->waveform, str->as_string, LIGOMETA_WAVEFORM_MAX - 1);
 	new->waveform[LIGOMETA_WAVEFORM_MAX-1] = '\0';
+	/* we are treated as taking ownership of this, so we need to free
+	 * it */
+	free(str->as_string);
+	str->as_string = NULL;
 
 	/* unpack additional columns depending on the waveform */
 	if(!strcmp(new->waveform, "StringCusp"))

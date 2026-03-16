@@ -47,8 +47,10 @@ union ligolw_cell {
 	uint64_t as_uint;
 	double as_double;
 	double complex as_double_complex;
-	const char *as_string;
-	const unsigned char *as_blob;
+	/* the cell object owns this data, it must be free()'ed when the
+	 * cell is no longer in use */
+	char *as_string;
+	unsigned char *as_blob;
 };
 
 
@@ -99,7 +101,7 @@ const char *ligolw_type_enum_to_name(enum ligolw_cell_type);
 size_t ligolw_type_enum_to_size(enum ligolw_cell_type);
 union ligolw_cell *ligolw_cell_from_txt(union ligolw_cell *, enum ligolw_cell_type, const char *);
 char *ligolw_cell_to_txt(union ligolw_cell, enum ligolw_cell_type);
-int ligolw_cell_to_c(const union ligolw_cell *, enum ligolw_cell_type, void *);
+int ligolw_cell_to_c(union ligolw_cell *, enum ligolw_cell_type, void *);
 
 ezxml_t ligolw_array_get(ezxml_t, const char *);
 struct ligolw_array *ligolw_array_parse(ezxml_t);

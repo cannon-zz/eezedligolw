@@ -170,12 +170,13 @@ struct ligolw_array *ligolw_array_parse(ezxml_t elem)
 
 			ligolw_stream_next_token(&txt, &start, &end, array->delimiter);
 
-			/* we have confirmed above that array->type is a numeric
-			 * type, so we don't need to bother null-terminating the
-			 * token before calling _cell_from_txt because parsing will
-			 * automatically stop at the end of the number, and also we
-			 * know the _to_c() function will not do something weird to
-			 * the contents of the array. */
+			/* we have confirmed above that array->type is a
+			 * numeric type, so we don't need to bother
+			 * null-terminating the token before calling
+			 * _cell_from_txt because parsing will
+			 * automatically stop at the end of the number.  we
+			 * also know we will not be given ownership of a
+			 * string or blob pointer that requires free(). */
 			if(!ligolw_cell_from_txt(&cell, array->type, start) || ligolw_cell_to_c(&cell, array->type, data)) {
 				ligolw_array_free(array);
 				return NULL;

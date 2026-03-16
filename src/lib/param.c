@@ -24,7 +24,9 @@
 /*
  * Parse an ezxml_t Param element.  The value is returned as a union
  * ligolw_cell object, and the type of the data is stored in the location
- * pointed to by type.
+ * pointed to by type.  If the Param contains string or blob data, a
+ * decoded copy in a newly-allocated buffer is created, and the calling
+ * code owns the memory and must free() it when done.
  */
 
 

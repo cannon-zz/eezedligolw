@@ -170,14 +170,17 @@ struct ligolw_table *ligolw_table_parse(ezxml_t elem, int (row_callback)(struct 
 
 			ligolw_stream_next_token(&txt, &start, &end, table->delimiter);
 
-			ligolw_cell_from_txt(&cells[c], table->columns[c].type, start);
-
 			/* null-terminate current token.  this does not
 			 * interfer with the exit test for the loop over
 			 * txt because end and txt can only point to the
-			 * same address if that address is the end of the
-			 * stream's text */
+			 * same address if that address is the
+			 * null-terminated end of the stream's text */
 			*end = '\0';
+
+			/* if the token is a string or blob type, a decoded
+			 * copy gets made.  we own that memory and need to
+			 * free() it when finished */
+			ligolw_cell_from_txt(&cells[c], table->columns[c].type, start);
 		}
 
 		/* row_callback takes ownership of row */
@@ -199,9 +202,27 @@ struct ligolw_table *ligolw_table_parse(ezxml_t elem, int (row_callback)(struct 
 
 void ligolw_table_free_row_data(struct ligolw_table *table, struct ligolw_table_row *row)
 {
+	int c;
 	if(!row)
 		return;
 	assert(table);
+	for(c = 0; c < table->n_columns; c++)
+		switch(table->columns[c].type) {
+		case ligolw_cell_type_char_s:
+		case ligolw_cell_type_char_v:
+		case ligolw_cell_type_ilwdchar:
+		case ligolw_cell_type_ilwdchar_u:
+		case ligolw_cell_type_lstring:
+			free(row->cells[c].as_string);
+			break;
+
+		case ligolw_cell_type_blob:
+			free(row->cells[c].as_blob);
+			break;
+
+		default:
+			break;
+		}
 	free(row->cells);
 	/* for safety */
 	row->cells = NULL;
@@ -270,9 +291,24 @@ ezxml_t ligolw_table_get(ezxml_t elem, const char *name)
  * Utility to assist with unpacking a table row into alternate storage.
  * NOTE:  this is not a row builder call-back for use with
  * ligolw_table_parse(), it is meant to assist with writing call-backs.
- * The signature is incompatible, and this does not take ownership of the
- * row object, it will not row the row object's contents when it is
- * finished.
+ *
+ * spec is a pointer to an array of struct ligolw_unpacking_spec objects,
+ * each describing a column:  the name of the column, the data type
+ * expected, whether the column is optional, and the address of the memory
+ * where the column's data is to be copied.  The end of the array is marked
+ * by a struct ligolw_unpacking_spec object whose name pointer is set to
+ * NULL.  Entries in the array whose dest pointers are NULL are checked for
+ * validity, but otherwise ignored.
+ *
+ * Ownership of the memory pointed to by the row's string and blob valued
+ * cells processed by this function is transfered from the row object to
+ * the destinations described by the ligolw_unpacking_spec.  The calling
+ * code must not free() the row's cell data pointers, if any, after this,
+ * but is obliged to free() the pointers into which those addresses were
+ * copied.  To reduce the risk of errors, affected cell objects have their
+ * data pointers set to NULL, and so it is safe for the calling code to
+ * unconditionally call free() on all cell object pointers afterwards, but
+ * be aware that that is not necessarily free()'ing all allocated memory.
  */
 
 

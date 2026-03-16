@@ -122,7 +122,11 @@ size_t ligolw_type_enum_to_size(enum ligolw_cell_type t)
 /*
  * populates a union ligolw_cell object by parsing the text contents of an
  * ezxml_t element as the given type.  returns the address of the union
- * ligolw_cell object on succes, NULL on error.
+ * ligolw_cell object on success, NULL on error.
+ *
+ * the data for string and blob types is decoded and returned copied into a
+ * newly allocated buffer.  the calling code owns the memory and must
+ * free() it when finished with it.
  */
 
 
@@ -136,12 +140,9 @@ union ligolw_cell *ligolw_cell_from_txt(union ligolw_cell *cell, enum ligolw_cel
 	case ligolw_cell_type_ilwdchar_u:
 	case ligolw_cell_type_blob:
 	case ligolw_cell_type_lstring:
-		/* FIXME: move into a separate buffer so
-		 * that the original document is not
-		 * modified (see null terminator below) */
 		/* FIXME: binary types need to be sent
 		 * through a decoder following this */
-		cell->as_string = txt;
+		cell->as_string = strdup(txt);
 		break;
 
 	case ligolw_cell_type_int_2s:
@@ -267,13 +268,21 @@ char *ligolw_cell_to_txt(union ligolw_cell cell, enum ligolw_cell_type type)
 
 
 /*
- * assign a union ligolw_cell's contents to a C variable.  dest must point
+ * Assign a union ligolw_cell's contents to a C variable.  dest must point
  * to the location of a C type maching the type of the cell's contents.
  * returns 0 on success, -1 on failure.
+ *
+ * This function takes ownership of the ligolw_cell's data, and transfers
+ * that ownership to the C variable.  For numeric types this has no
+ * meaning, but for pointer types, strings and blobs, after this function
+ * call the calling code must not free() the ligolw_cell's data, but is
+ * required to free() the C pointer destination when finished with it.  To
+ * reduce the risk of errors, the cell's data pointer is set to NULL, so it
+ * is safe for calling code to call free() on the cell's pointer.
  */
 
 
-int ligolw_cell_to_c(const union ligolw_cell *cell, enum ligolw_cell_type type, void *dest)
+int ligolw_cell_to_c(union ligolw_cell *cell, enum ligolw_cell_type type, void *dest)
 {
 	switch(type) {
 	case ligolw_cell_type_char_s:
@@ -281,11 +290,13 @@ int ligolw_cell_to_c(const union ligolw_cell *cell, enum ligolw_cell_type type, 
 	case ligolw_cell_type_ilwdchar:
 	case ligolw_cell_type_ilwdchar_u:
 	case ligolw_cell_type_lstring:
-		*(const char **) dest = cell->as_string;
+		*(char **) dest = cell->as_string;
+		cell->as_string = NULL;
 		break;
 
 	case ligolw_cell_type_blob:
-		*(const unsigned char **) dest = cell->as_blob;
+		*(unsigned char **) dest = cell->as_blob;
+		cell->as_blob = NULL;
 		break;
 
 	case ligolw_cell_type_int_2s:
