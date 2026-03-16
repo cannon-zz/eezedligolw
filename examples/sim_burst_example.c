@@ -37,6 +37,7 @@ static int sim_burst_row_callback(struct ligolw_table *table, struct ligolw_tabl
 	int result_code;
 	SimBurst **head = data;
 	SimBurst *new = XLALCreateSimBurst();
+	union ligolw_cell *str;
 	struct ligolw_unpacking_spec *spec;
 	struct ligolw_unpacking_spec sim_burst_basic[] = {
 		{&new->process_id, "process:process_id", ligolw_cell_type_int_8s, LIGOLW_COLUMN_FLAGS_REQUIRED},
@@ -101,8 +102,11 @@ static int sim_burst_row_callback(struct ligolw_table *table, struct ligolw_tabl
 		goto unpackerror;
 
 	/* do this after ligolw_table_unpack_row() to let it confirm the
-	 * column is present and has the correct type */
-	strncpy(new->waveform, ligolw_row_get_cell(row, "waveform", NULL).as_string, LIGOMETA_WAVEFORM_MAX - 1);
+	 * column is present and has the correct type.  we've confirmed the
+	 * column exists and has the correct type, so shouldn't need to
+	 * check for errors */
+	str = ligolw_row_get_cell(row, "waveform", NULL);
+	strncpy(new->waveform, str->as_string, LIGOMETA_WAVEFORM_MAX - 1);
 	new->waveform[LIGOMETA_WAVEFORM_MAX-1] = '\0';
 
 	/* unpack additional columns depending on the waveform */

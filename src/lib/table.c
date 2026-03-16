@@ -67,15 +67,16 @@ int ligolw_table_default_row_callback(struct ligolw_table *table, struct ligolw_
 
 
 /*
- * retrieve the ligolw_cell corresponding to the named column from a row.
- * if type is not NULL, the cell type is stored in the location it points
- * to.
+ * Return the address of the ligolw_cell corresponding to the named column
+ * If type is not NULL, the cell type is stored in the location it points
+ * to.  Returns NULL on error;
  */
 
 
-union ligolw_cell ligolw_row_get_cell(const struct ligolw_table_row *row, const char *name, enum ligolw_cell_type *type)
+union ligolw_cell *ligolw_row_get_cell(const struct ligolw_table_row *row, const char *name, enum ligolw_cell_type *type)
 {
-	return row->cells[ligolw_table_get_column(row->table, name, type)];
+	int i = ligolw_table_get_column(row->table, name, type);
+	return i >= 0 ? &row->cells[i] : NULL;
 }
 
 
