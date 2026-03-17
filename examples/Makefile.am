@@ -14,6 +14,6 @@ psd_example_SOURCES = psd_example.c
 psd_example_LDFLAGS = $(LAL_LIBS) $(LALMETAIO_LIBS)
 psd_example_CFLAGS = $(LAL_CFLAGS) $(LALMETAIO_LIBS)
 
-sim_burst_example_SOURCES = sim_burst_example.c
+sim_burst_example_SOURCES = sim_burst_example.c sim_burst_row.c
 sim_burst_example_LDFLAGS = $(LAL_LIBS) $(LALMETAIO_LIBS) $(LALBURST_LIBS)
 sim_burst_example_CFLAGS = $(LAL_CFLAGS) $(LALMETAIO_LIBS) $(LALBURST_LIBS)
