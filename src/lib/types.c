@@ -367,3 +367,31 @@ int ligolw_cell_to_c(union ligolw_cell *cell, enum ligolw_cell_type type, void *
 		return -1;
 	}
 }
+
+
+/*
+ * Copy the contents of a ligolw_cell containing a string into a
+ * pre-allocated C buffer.  This exists mostly to support the lalsuite use
+ * case, wherein table row types use pre-allocated fixed-length buffers for
+ * string-valued columns.  dest must point to the start of a buffer, into
+ * which at most len characters will be copied, in addition to a
+ * terminating null character.  Returns < 0 on failure, or the length of
+ * the string copied excluding the terminating null character on success.
+ *
+ * This function takes ownership of the ligolw_cell's data, the
+ * calling code need not free() the string contained in the ligolw_cell but
+ * must free() the ligolw_cell itself if required.  The ligolw_cell's
+ * string pointer is set to NULL, so it is safe for the calling code to
+ * call free() on it, but doing so has no effect on allocated memory.
+ */
+
+
+int ligolw_cell_string_copy(union ligolw_cell *cell, char *dest, size_t len)
+{
+	size_t copied;
+	copied = stpncpy(dest, cell->as_string, len) - dest;
+	dest[len] = '\0';
+	free(cell->as_string);
+	cell->as_string = NULL;
+	return copied;
+}
