@@ -84,11 +84,17 @@ static int XLALTableFromLIGOLw(
 
 
 int XLALSimBurstTableFromLIGOLw(
-	SimBurst **head,
+	SimBurst **sims,
+	TimeSlide **tisls,
 	const char *filename
 )
 {
-	return XLALTableFromLIGOLw(head, filename, "sim_burst", sim_burst_row_callback);
+	int failure = false;
+
+	failure |= XLALTableFromLIGOLw(sims, filename, "sim_burst", sim_burst_row_callback);
+	failure |= XLALTableFromLIGOLw(tisls, filename, "time_slide", time_slide_row_callback);
+
+	return failure;
 }
 
 
@@ -97,12 +103,13 @@ int XLALSimBurstTableFromLIGOLw(
  */
 
 
-static void write(const SimBurst *sims, const char *filename)
+static void write(const char *filename, const SimBurst *sims, const TimeSlide *tisls)
 {
 	LIGOLwXMLStream *xml;
 
 	xml = XLALOpenLIGOLwXMLFile(filename);
 	XLALWriteLIGOLwXMLSimBurstTable(xml, sims);
+	XLALWriteLIGOLwXMLTimeSlideTable(xml, tisls);
 	XLALCloseLIGOLwXMLFile(xml);
 }
 
@@ -111,12 +118,14 @@ static void write(const SimBurst *sims, const char *filename)
 int main(int argc, char *argv[])
 {
 	SimBurst *sims;
+	TimeSlide *tisls;
 
-	XLALSimBurstTableFromLIGOLw(&sims, "HL-INJECTIONS_PLAYGROUND-793154935-2524278.xml.gz");
+	XLALSimBurstTableFromLIGOLw(&sims, &tisls, "HL-INJECTIONS_PLAYGROUND-793154935-2524278.xml.gz");
 
-	write(sims, "output.xml");
+	write("output.xml", sims, tisls);
 
 	XLALDestroySimBurstTable(sims);
+	XLALDestroyTimeSlideTable(tisls);
 
 	return 0;
 }
