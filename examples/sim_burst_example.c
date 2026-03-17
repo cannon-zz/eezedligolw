@@ -25,6 +25,8 @@
 
 
 int sim_burst_row_callback(struct ligolw_table *, struct ligolw_table_row *, void *);
+int time_slide_row_callback(struct ligolw_table *, struct ligolw_table_row *, void *);
+int sim_insprial_row_callback(struct ligolw_table *, struct ligolw_table_row *, void *);
 
 
 /*
