@@ -7,6 +7,8 @@ AM_INIT_AUTOMAKE([foreign subdir-objects])
 AC_CONFIG_FILES([                        \
 	Makefile                         \
 	ezligolw.pc                      \
+	debian/control                   \
+	debian/Makefile                  \
 	src/Makefile                     \
 	src/ezxml/Makefile               \
 	src/include/Makefile             \

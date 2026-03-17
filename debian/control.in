@@ -1,0 +1,53 @@
+Source: ezligolw
+Maintainer: Kipp Cannon <kipp@g.ecc.u-tokyo.ac.jp>
+Section: contrib/science
+Priority: optional
+Standards-Version: 3.9.2
+Build-Depends:
+ debhelper (>= 9),
+ fakeroot,
+ libb64-dev,
+ liblal-dev (>= @MIN_LAL_VERSION@),
+ liblalburst-dev (>= @MIN_LALBURST_VERSION@),
+ liblalmetaio-dev (>= @MIN_LALMETAIO_VERSION@),
+ pkg-config,
+ zlib1g-dev
+
+Package: libezligolw
+Architecture: amd64
+Depends: ${shlibs:Depends}, ${misc:Depends},
+ libb64,
+ zlib1g
+Suggests:
+ libezligolw-bin
+Description: LIGO Light-Weight XML I/O library built around ezxml.
+ This package provides a C library enabling limited support for documents
+ in the LIGO Light-Weight XML file format.  It occupies a niche in feature
+ space similar to the metaio library.  Table, Array, and Param elements and
+ their constituents are well supported, which is sufficient to interact
+ with most signal detection and interpretation codes.  For example PSD
+ files, template bank files, GstLAL ranking statistic data files, burst and
+ compact object merger injection lists, and detection search results files
+ are well supported.  This library, however, is not intended to ever
+ provide full generic support for the file format.  It has been written
+ mostly out of necessity on an as-needed basis.  People looking for a full
+ general-purpose I/O library for the file format are directed to the
+ python3-ligolw package.  There is no C solution.
+
+Package: libezligolw-dev
+Architecture: any
+Depends: ${misc:Depends},
+ libezligolw (= ${binary:Version}),
+ libc6-dev
+Description: Files needed for compiling ezligolw based software.
+ This package contains the files needed to compile ezligolw based software.
+
+Package: libezligolw-bin
+Architecture: amd64
+Depends: ${shlibs:Depends}, ${misc:Depends},
+ libezligolw (= ${binary:Version}),
+ liblal20 (>= @MIN_LAL_VERSION@),
+ liblalburst8 (>= @MIN_LALBURST_VERSION@),
+ liblalmetaio11 (>= @MIN_LALMETAIO_VERSION@)
+Description: LIGO Light-Weight XML I/O library command line utilities.
+ This package provides example programs demonstrating libezligolw.
