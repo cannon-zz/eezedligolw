@@ -1,0 +1,9 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+
+Name: @PACKAGE@-lal
+Description: LIGO Light-Weight XML I/O library built around ezxml (lal support)
+Version: @PACKAGE_VERSION@
+Requires: @PACKAGE@
+Libs: -L@libdir@ -lezligolw-lal
+Cflags: -I@includedir@
