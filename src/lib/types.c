@@ -17,6 +17,7 @@
  */
 
 
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 #include <b64/cdecode.h>
@@ -250,32 +251,38 @@ char *ligolw_cell_to_txt(union ligolw_cell cell, enum ligolw_cell_type type)
 	case ligolw_cell_type_int_2s:
 	case ligolw_cell_type_int_4s:
 	case ligolw_cell_type_int_8s:
-		asprintf(&dst, "%lld", (long long) cell.as_int);
+		if(asprintf(&dst, "%lld", (long long) cell.as_int) < 0)
+			assert(false);
 		break;
 
 	case ligolw_cell_type_int_2u:
 	case ligolw_cell_type_int_4u:
 	case ligolw_cell_type_int_8u:
-		asprintf(&dst, "%llu", (unsigned long long) cell.as_uint);
+		if(asprintf(&dst, "%llu", (unsigned long long) cell.as_uint) < 0)
+			assert(false);
 		break;
 
 	case ligolw_cell_type_real_4:
-		asprintf(&dst, "%.7g", cell.as_double);
+		if(asprintf(&dst, "%.7g", cell.as_double) < 0)
+			assert(false);
 		break;
 
 	case ligolw_cell_type_real_8:
-		asprintf(&dst, "%.16g", cell.as_double);
+		if(asprintf(&dst, "%.16g", cell.as_double) < 0)
+			assert(false);
 		break;
 
 	case ligolw_cell_type_complex_8: {
 		double complex x = cell.as_double_complex;
-		asprintf(&dst, "%.7g+i%.7g", creal(x), cimag(x));
+		if(asprintf(&dst, "%.7g+i%.7g", creal(x), cimag(x)) < 0)
+			assert(false);
 		break;
 	}
 
 	case ligolw_cell_type_complex_16: {
 		double complex x = cell.as_double_complex;
-		asprintf(&dst, "%.16g+i%.16g", creal(x), cimag(x));
+		if(asprintf(&dst, "%.16g+i%.16g", creal(x), cimag(x)) < 0)
+			assert(false);
 		break;
 	}
 
