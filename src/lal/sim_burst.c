@@ -123,7 +123,7 @@ int ligolw_sim_burst_row_callback(struct ligolw_table *table, struct ligolw_tabl
 	return 0;
 
 error:
-	free(new);
+	XLALDestroySimBurst(new);
 	ligolw_table_free_row_data(table, row);
 	free(row);
 	return -1;

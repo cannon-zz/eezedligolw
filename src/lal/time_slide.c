@@ -62,7 +62,7 @@ int ligolw_time_slide_row_callback(struct ligolw_table *table, struct ligolw_tab
 	return 0;
 
 error:
-	free(new);
+	XLALDestroyTimeSlide(new);
 	ligolw_table_free_row_data(table, row);
 	free(row);
 	return -1;

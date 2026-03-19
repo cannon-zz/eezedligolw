@@ -17,8 +17,8 @@
  */
 
 
+#include <lal/LALMalloc.h>
 #include <lal/LIGOMetadataTables.h>
-#include <lal/LIGOMetadataUtils.h>
 #include <lal/XLALError.h>
 #include <ezligolw/ezligolw.h>
 #include <ezligolw/lal.h>
