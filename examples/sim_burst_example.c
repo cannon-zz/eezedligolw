@@ -33,19 +33,13 @@
  */
 
 
-static int XLALTableFromLIGOLw(
-	void *head,
-	const char *filename,
-	const char *table_name,
-	int row_callback(struct ligolw_table *, struct ligolw_table_row *, void *)
+int XLALSimBurstTableFromLIGOLw(
+	SimBurst **sims,
+	TimeSlide **tisls,
+	const char *filename
 )
 {
 	ezxml_t xmldoc;
-	ezxml_t elem;
-	struct ligolw_table *table;
-
-	/* initialize the linked list */
-	*(void **) head = NULL;
 
 	/* parse the document */
 	xmldoc = ezxml_parse_gzfile(filename);
@@ -54,43 +48,12 @@ static int XLALTableFromLIGOLw(
 		XLAL_ERROR(XLAL_EIO);
 	}
 
-	/* find the table */
-	elem = ligolw_table_get(xmldoc, table_name);
-	if(!elem) {
-		XLALPrintError("unable to locate %s table\n", table_name);
-		ezxml_free(xmldoc);
-		XLAL_ERROR(XLAL_EDATA);
-	}
+	*sims = ligolw_lal_table_get(xmldoc, "sim_burst", NULL);
+	*tisls = ligolw_lal_table_get(xmldoc, "time_slide", NULL);
 
-	/* convert the rows to a LAL-style linked list */
-	table = ligolw_table_parse(elem, row_callback, head);
-	if(!table) {
-		XLALPrintError("failure parsing %s table\n", table_name);
-		ezxml_free(xmldoc);
-		XLAL_ERROR(XLAL_EDATA);
-	}
-
-	/* clean up */
-	ligolw_table_free(table);
 	ezxml_free(xmldoc);
 
-	/* success */
-	return 0;
-}
-
-
-int XLALSimBurstTableFromLIGOLw(
-	SimBurst **sims,
-	TimeSlide **tisls,
-	const char *filename
-)
-{
-	int failure = false;
-
-	failure |= XLALTableFromLIGOLw(sims, filename, "sim_burst", ligolw_sim_burst_row_callback);
-	failure |= XLALTableFromLIGOLw(tisls, filename, "time_slide", ligolw_time_slide_row_callback);
-
-	return failure;
+	return !(*sims && *tisls);
 }
 
 
