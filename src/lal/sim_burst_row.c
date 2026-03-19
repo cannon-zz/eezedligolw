@@ -29,7 +29,6 @@ int ligolw_sim_burst_row_callback(struct ligolw_table *table, struct ligolw_tabl
 	int result_code;
 	SimBurst **head = data;
 	SimBurst *new = XLALCreateSimBurst();
-	struct ligolw_unpacking_spec *spec;
 	struct ligolw_unpacking_spec sim_burst_basic[] = {
 		{"process:process_id", &new->process_id, NULL, ligolw_cell_type_int_8s, LIGOLW_COLUMN_FLAGS_REQUIRED},
 		{"waveform", NULL, NULL, ligolw_cell_type_lstring, LIGOLW_COLUMN_FLAGS_REQUIRED},
@@ -88,9 +87,9 @@ int ligolw_sim_burst_row_callback(struct ligolw_table *table, struct ligolw_tabl
 
 	/* unpack the base columns.  have to do the strings manually
 	 * because they get copied by value rather than reference. */
-	result_code = ligolw_table_unpack_row(table, *row, spec = sim_burst_basic);
+	result_code = ligolw_lal_table_unpack_row(table, *row, sim_burst_basic);
 	if(result_code)
-		goto unpackerror;
+		goto error;
 
 	/* do this after ligolw_table_unpack_row() to let it confirm the
 	 * column is present and has the correct type.  we've confirmed the
@@ -100,22 +99,22 @@ int ligolw_sim_burst_row_callback(struct ligolw_table *table, struct ligolw_tabl
 
 	/* unpack additional columns depending on the waveform */
 	if(!strcmp(new->waveform, "StringCusp"))
-		result_code = ligolw_table_unpack_row(table, *row, spec = sim_burst_StringCusp);
+		result_code = ligolw_table_unpack_row(table, *row, sim_burst_StringCusp);
 	else if(!strcmp(new->waveform, "SineGaussian") || !strcmp(new->waveform, "SineGaussianF"))
-		result_code = ligolw_table_unpack_row(table, *row, spec = sim_burst_SineGaussian);
+		result_code = ligolw_table_unpack_row(table, *row, sim_burst_SineGaussian);
 	else if(!strcmp(new->waveform, "Gaussian"))
-		result_code = ligolw_table_unpack_row(table, *row, spec = sim_burst_Gaussian);
+		result_code = ligolw_table_unpack_row(table, *row, sim_burst_Gaussian);
 	else if(!strcmp(new->waveform, "BTLWNB"))
-		result_code = ligolw_table_unpack_row(table, *row, spec = sim_burst_BTLWNB);
+		result_code = ligolw_table_unpack_row(table, *row, sim_burst_BTLWNB);
 	else if(!strcmp(new->waveform, "Impulse"))
-		result_code = ligolw_table_unpack_row(table, *row, spec = sim_burst_Impulse);
+		result_code = ligolw_table_unpack_row(table, *row, sim_burst_Impulse);
 	else {
 		/* unrecognized waveform */
 		XLALPrintError("failure parsing row: unrecognized waveform \"%s\"\n", new->waveform);
 		goto error;
 	}
 	if(result_code)
-		goto unpackerror;
+		goto error;
 
 	/* add new sim to head of linked list.  the linked list's elements
 	 * are reversed with respect to the file. */
@@ -127,14 +126,6 @@ int ligolw_sim_burst_row_callback(struct ligolw_table *table, struct ligolw_tabl
 	free(row);
 	return 0;
 
-unpackerror:
-	if(result_code > 0) {
-		/* missing required column */
-		XLALPrintError("failure parsing row: missing column \"%s\"\n", spec[result_code - 1].name);
-	} else if(result_code < 0) {
-		/* column type mismatch */
-		XLALPrintError("failure parsing row: incorrect type for column \"%s\"\n", spec[-result_code - 1].name);
-	}
 error:
 	free(new);
 	ligolw_table_free_row_data(table, row);

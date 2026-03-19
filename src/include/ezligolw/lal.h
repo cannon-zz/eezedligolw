@@ -20,6 +20,9 @@
 #include <ezligolw/ezligolw.h>
 
 
+int ligolw_lal_table_unpack_row(struct ligolw_table *, struct ligolw_table_row, struct ligolw_unpacking_spec *);
+
+
 int ligolw_sim_burst_row_callback(struct ligolw_table *, struct ligolw_table_row *, void *);
 int ligolw_sim_inspiral_row_callback(struct ligolw_table *, struct ligolw_table_row *, void *);
 int ligolw_time_slide_row_callback(struct ligolw_table *, struct ligolw_table_row *, void *);

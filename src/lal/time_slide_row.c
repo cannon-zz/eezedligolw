@@ -47,15 +47,8 @@ int ligolw_time_slide_row_callback(struct ligolw_table *table, struct ligolw_tab
 	/* unpack.  have to do the strings manually because they get copied
 	 * by value rather than reference. */
 	result_code = ligolw_table_unpack_row(table, *row, spec);
-	if(result_code > 0) {
-		/* missing required column */
-		XLALPrintError("failure parsing row: missing column \"%s\"\n", spec[result_code - 1].name);
+	if(result_code)
 		goto error;
-	} else if(result_code < 0) {
-		/* column type mismatch */
-		XLALPrintError("failure parsing row: incorrect type for column \"%s\"\n", spec[-result_code - 1].name);
-		goto error;
-	}
 
 	/* do this after ligolw_table_unpack_row() to let it confirm the
 	 * column is present and has the correct type.  we've confirmed the
