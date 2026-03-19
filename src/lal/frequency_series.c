@@ -27,8 +27,9 @@
 
 
 /*
- * construct a REAL8FrequencySeries object from the LIGO_LW element located
- * at elem.
+ * Construct a LAL REAL8FrequencySeries object from the LIGO_LW element
+ * located at elem.  Errors are reported using the XLAL error reporting
+ * mechanism.
  */
 
 

@@ -17,6 +17,7 @@
  */
 
 
+#include <lal/LALDict.h>
 #include <lal/FrequencySeries.h>
 #include <ezligolw/ezligolw.h>
 
@@ -30,3 +31,7 @@ int ligolw_time_slide_row_callback(struct ligolw_table *, struct ligolw_table_ro
 
 
 REAL8FrequencySeries *ligolw_REAL8FrequencySeries_parse(ezxml_t);
+
+
+LALDict *ligolw_PSDs(ezxml_t);
+LALDict *ligolw_PSDsFromFile(const char *);

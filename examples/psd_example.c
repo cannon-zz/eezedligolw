@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025  Kipp Cannon
+ * Copyright (C) 2025,2026  Kipp Cannon
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -17,14 +17,10 @@
  */
 
 
-#include <string.h>
 #include <lal/Date.h>
 #include <lal/LALDict.h>
 #include <lal/LALMalloc.h>
 #include <lal/FrequencySeries.h>
-#include <lal/LALList.h>
-#include <lal/XLALError.h>
-#include <ezligolw/ezligolw.h>
 #include <ezligolw/lal.h>
 
 
@@ -34,98 +30,9 @@
  */
 
 
-/*
- * iterate over LIGO_LW elements rooted at elem that contain
- * REAL8FrequencySeries objects.
- */
-
-
-static ezxml_t ligolw_REAL8FrequencySeries_iter(ezxml_t elem)
-{
-	return ligolw_elem_iter(elem, "LIGO_LW", "REAL8FrequencySeries");
-}
-
-
-static ezxml_t ligolw_REAL8FrequencySeries_next(ezxml_t elem)
-{
-	return ligolw_elem_next(elem, "LIGO_LW", "REAL8FrequencySeries");
-}
-
-
-/*
- * Returns a LALDict whose keys are the instrument names and whose values
- * are BLOBValue's containing REAL8FrequencySeries objects.  This function
- * only works properly on files that contain a PSD dictionary and no other
- * REAL8FrequencySeries objects.  It should work if other
- * REAL8FrequencySeries objects are preset as long as the PSD dictionary
- * preceeds them in the file, and they aren't at the same depth in the
- * element tree.  These are not requirements of the file format, this could
- * easily break on what should be considered properly constructed input;
- * these requirement reflect actual use at the time of writing and my own
- * laziness to do a better job.
- *
- * Example:
- *
- * LALDict *psds = XLALPSDsFromLIGOLw("psds.xml");
- * REAL8FrequencySeries *psd_L1 = XLALDictPopBLOBValue(psds, "L1");
- * ...
- * XLALDestroyREAL8FrequencySeries(psd_L1);
- *
- * NOTES:  if the frequency series is popped out of the dictionary, then
- * the calling code owns the reference and must free the frequency series
- * when done.  If only a look-up operation is performed then the dictionary
- * still owns the pointer and the calling code must not free it.
- */
-
-
-LALDict *XLALPSDsFromLIGOLw(
-	const char *filename
-)
-{
-	ezxml_t xmldoc;
-	ezxml_t elem;
-	LALDict *psds = XLALCreateDict();
-
-	if(!psds)
-		XLAL_ERROR_NULL(XLAL_EFUNC);
-
-	/* parse the document */
-	xmldoc = ezxml_parse_gzfile(filename);
-	if(!xmldoc) {
-		XLAL_PRINT_ERROR("error parsing \"%s\"", filename);
-		XLALDestroyDict(psds);
-		XLAL_ERROR_NULL(XLAL_EIO);
-	}
-
-	/* loop over REAL8FrequencySeries objects at the same depth as
-	 * whichever one is found first */
-	for(elem = ligolw_REAL8FrequencySeries_iter(xmldoc); elem; elem = ligolw_REAL8FrequencySeries_next(elem)) {
-		REAL8FrequencySeries *series = ligolw_REAL8FrequencySeries_parse(elem);
-		const char *instrument;
-		if(!series || ligolw_param_get_as_c(ligolw_param_get(elem, "instrument"), &instrument, ligolw_cell_type_lstring) < 0) {
-			XLAL_PRINT_ERROR("failure parsing PSD");
-			XLALDestroyDict(psds);
-			XLAL_ERROR_NULL(XLAL_EDATA);
-		}
-		XLALDictInsertBLOBValue(psds, instrument, series, sizeof(*series));
-	}
-
-	/* clean up */
-	ezxml_free(xmldoc);
-
-	/* success */
-	return psds;
-}
-
-
-/*
- * Example use.
- */
-
-
 int main(int argc, char *argv[])
 {
-	LALDict *psds = XLALPSDsFromLIGOLw("H1L1V1_O2REFERENCE_psd.xml.gz");
+	LALDict *psds = ligolw_PSDsFromFile("H1L1V1_O2REFERENCE_psd.xml.gz");
 	LALList *instruments = psds ? XLALDictKeys(psds) : NULL;
 	LALListItem *item;
 
