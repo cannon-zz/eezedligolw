@@ -26,7 +26,6 @@
 
 int ligolw_sim_inspiral_row_callback(struct ligolw_table *table, struct ligolw_table_row *row, void *data)
 {
-	int result_code;
 	SimInspiralTable **head = data;
 	SimInspiralTable *new = LALCalloc(1, sizeof(*new));	/* ugh, lal */
 	struct ligolw_unpacking_spec spec[] = {
@@ -107,12 +106,11 @@ int ligolw_sim_inspiral_row_callback(struct ligolw_table *table, struct ligolw_t
 
 	/* unpack.  have to do the strings manually because they get copied
 	 * by value rather than reference. */
-	result_code = ligolw_table_unpack_row(table, *row, spec);
-	if(result_code)
+	if(ligolw_table_unpack_row(table, *row, spec))
 		goto error;
 
 	/* do this after unpack_row() to let it confirm the columns are
-	 * present and ahve the correct type.  shouldn't need to check for
+	 * present and have the correct type.  shouldn't need to check for
 	 * errors here */
 	ligolw_cell_string_copy(ligolw_row_get_cell(row, "waveform", NULL), new->waveform, LIGOMETA_WAVEFORM_MAX - 1);
 	ligolw_cell_string_copy(ligolw_row_get_cell(row, "source", NULL), new->source, LIGOMETA_SOURCE_MAX - 1);

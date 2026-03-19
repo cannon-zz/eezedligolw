@@ -26,7 +26,6 @@
 
 int ligolw_time_slide_row_callback(struct ligolw_table *table, struct ligolw_table_row *row, void *data)
 {
-	int result_code;
 	TimeSlide **head = data;
 	TimeSlide *new = XLALCreateTimeSlide();
 	struct ligolw_unpacking_spec spec[] = {
@@ -45,8 +44,7 @@ int ligolw_time_slide_row_callback(struct ligolw_table *table, struct ligolw_tab
 
 	/* unpack.  have to do the strings manually because they get copied
 	 * by value rather than reference. */
-	result_code = ligolw_table_unpack_row(table, *row, spec);
-	if(result_code)
+	if(ligolw_table_unpack_row(table, *row, spec))
 		goto error;
 
 	/* do this after unpack_row() to let it confirm the column is

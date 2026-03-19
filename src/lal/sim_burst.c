@@ -86,8 +86,7 @@ int ligolw_sim_burst_row_callback(struct ligolw_table *table, struct ligolw_tabl
 
 	/* unpack the base columns.  have to do the strings manually
 	 * because they get copied by value rather than reference. */
-	result_code = ligolw_lal_table_unpack_row(table, *row, sim_burst_basic);
-	if(result_code)
+	if(ligolw_lal_table_unpack_row(table, *row, sim_burst_basic))
 		goto error;
 
 	/* do this after unpack_row() to let it confirm the column is
