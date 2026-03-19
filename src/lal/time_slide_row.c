@@ -37,8 +37,7 @@ int ligolw_time_slide_row_callback(struct ligolw_table *table, struct ligolw_tab
 		{NULL, NULL, NULL, -1, 0}
 	};
 
-	/* check for memory allocation failure.  remember to clean up row's
-	 * memory. */
+	/* check for memory allocation failure */
 	if(!new) {
 		XLALPrintError("memory allocation failure\n");
 		goto error;
@@ -50,14 +49,12 @@ int ligolw_time_slide_row_callback(struct ligolw_table *table, struct ligolw_tab
 	if(result_code)
 		goto error;
 
-	/* do this after ligolw_table_unpack_row() to let it confirm the
-	 * column is present and has the correct type.  we've confirmed the
-	 * column exists and has the correct type, so shouldn't need to
-	 * check for errors */
+	/* do this after unpack_row() to let it confirm the column is
+	 * present and has the correct type.  shouldn't need to check for
+	 * errors here */
 	ligolw_cell_string_copy(ligolw_row_get_cell(row, "instrument", NULL), new->instrument, LIGOMETA_STRING_MAX - 1);
 
-	/* add new sim to head of linked list.  yes, this means the table's
-	 * rows get reversed.  so what. */
+	/* add new sim to head of linked list */
 	new->next = *head;
 	*head = new;
 
