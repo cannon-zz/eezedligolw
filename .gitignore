@@ -12,6 +12,7 @@ config.log
 config.status
 configure
 configure~
+debian/control
 examples/psd_example
 examples/sim_burst_example
 gnuscripts/compile
