@@ -15,27 +15,31 @@ XML documents.  No facility is provided to write data back to disk.
 
 ## Details
 
-Array, Param, Table and Time elements are supported.  See the ezligolw.h
-file for the library's public interface.
+The entire LIGO Light-Weight DTD is supported, however specialized support
+code is available only for Array, Param, Table and Time elements (and their
+children).  See the ezligolw.h file for the library's public interface.
+This should be enough for the majority of data analysis applications.
 
 Table element trees can be parsed into a generic, inefficient, internal
 representation, or an external row building call-back can be provided to
-store the decoded data into purpose-made data structures provided by the
-calling code.
+store the decoded data into data structures provided by the calling code.
 
-See the examples/ directory for demonstrations.
+A modest support library is provided to assist with using the parsing code
+together with lalsuite.  Facilities are provided to load a limited
+selection of LAL table structures from XML files into LAL linked lists, and
+to extract LALDict dictionaries of REAL8FrequencySeries PSDs from XML
+files.  See the examples/ directory for demonstrations.
 
 ezxml reads the entire document into memory as a string, which typically
-means enough memory is required to store two full copies of the document
-(the text copy ezxml loaded, and the decoded data structures extracted from
-it).
+means enough memory is required, at least momentarily, to store two full
+copies of the document (the text copy ezxml loaded, and the decoded data
+structures extracted from it).
 
 The ezxml API uses plain char types everyhwere, and its unicode support is
 hit and miss.  Assume you cannot use non-ASCII characters if your
 documents.
 
 ## ezxml Status
-
 
 ezxml is abandonware, but there are some places where forks of it live that
 have received some updates.  I'll document the ones I know of here to make
