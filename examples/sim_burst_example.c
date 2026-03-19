@@ -19,54 +19,19 @@
 
 #include <lal/LIGOLwXML.h>
 #include <lal/LIGOMetadataUtils.h>
-#include <lal/SnglBurstUtils.h>
 #include <lal/XLALError.h>
 #include <ezligolw/ezligolw.h>
 #include <ezligolw/lal.h>
 
 
 /*
- * Demonstration of the implementation of an XLAL-style (near) drop-in
- * replacement of LALSimBurstTableFromLIGOLw() built on top of ezligolw.
- * For clarity, the LAL code's ability to filter the input trigger list by
- * GPS time has not been implemented here.
- */
-
-
-int XLALSimBurstTableFromLIGOLw(
-	SimBurst **sims,
-	TimeSlide **tisls,
-	const char *filename
-)
-{
-	ezxml_t xmldoc;
-
-	/* parse the document */
-	xmldoc = ezxml_parse_gzfile(filename);
-	if(!xmldoc) {
-		XLALPrintError("error parsing %s\n", filename);
-		XLAL_ERROR(XLAL_EIO);
-	}
-
-	*sims = ligolw_lal_table_get(xmldoc, "sim_burst", NULL);
-	*tisls = ligolw_lal_table_get(xmldoc, "time_slide", NULL);
-
-	ezxml_free(xmldoc);
-
-	return !(*sims && *tisls);
-}
-
-
-/*
- * Example use.
+ * Demonstration of the LAL tabular data loading.
  */
 
 
 static void write(const char *filename, const SimBurst *sims, const TimeSlide *tisls)
 {
-	LIGOLwXMLStream *xml;
-
-	xml = XLALOpenLIGOLwXMLFile(filename);
+	LIGOLwXMLStream *xml = XLALOpenLIGOLwXMLFile(filename);
 	XLALWriteLIGOLwXMLSimBurstTable(xml, sims);
 	XLALWriteLIGOLwXMLTimeSlideTable(xml, tisls);
 	XLALCloseLIGOLwXMLFile(xml);
@@ -76,10 +41,27 @@ static void write(const char *filename, const SimBurst *sims, const TimeSlide *t
 
 int main(int argc, char *argv[])
 {
+	const char *filename = "HL-INJECTIONS_PLAYGROUND-793154935-2524278.xml.gz";
+	ezxml_t xmldoc;
 	SimBurst *sims;
 	TimeSlide *tisls;
 
-	XLALSimBurstTableFromLIGOLw(&sims, &tisls, "HL-INJECTIONS_PLAYGROUND-793154935-2524278.xml.gz");
+	xmldoc = ezxml_parse_gzfile(filename);
+	if(!xmldoc) {
+		XLALPrintError("error parsing %s\n", filename);
+		return 1;
+	}
+
+	sims = ligolw_lal_table_get(xmldoc, "sim_burst", NULL);
+	tisls = ligolw_lal_table_get(xmldoc, "time_slide", NULL);
+
+	/* all required data has been copied */
+	ezxml_free(xmldoc);
+
+	if(!sims || !tisls) {
+		XLALPrintError("error parsing %s\n", filename);
+		return 1;
+	}
 
 	write("output.xml", sims, tisls);
 
