@@ -17,6 +17,7 @@
  */
 
 
+#include <lal/FrequencySeries.h>
 #include <ezligolw/ezligolw.h>
 
 
@@ -26,3 +27,6 @@ int ligolw_lal_table_unpack_row(struct ligolw_table *, struct ligolw_table_row, 
 int ligolw_sim_burst_row_callback(struct ligolw_table *, struct ligolw_table_row *, void *);
 int ligolw_sim_inspiral_row_callback(struct ligolw_table *, struct ligolw_table_row *, void *);
 int ligolw_time_slide_row_callback(struct ligolw_table *, struct ligolw_table_row *, void *);
+
+
+REAL8FrequencySeries *ligolw_REAL8FrequencySeries_parse(ezxml_t);

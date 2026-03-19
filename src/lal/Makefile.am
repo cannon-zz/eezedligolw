@@ -3,6 +3,7 @@ AM_CPPFLAGS = -I../include $(LAL_CFLAGS) $(LALMETAIO_LIBS)
 lib_LTLIBRARIES = libezligolw-lal.la
 
 libezligolw_lal_la_SOURCES = \
+	frequency_series.c \
 	sim_burst.c \
 	sim_inspiral.c \
 	time_slide.c \
