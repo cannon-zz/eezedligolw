@@ -88,15 +88,21 @@ union ligolw_cell *ligolw_row_get_cell(const struct ligolw_table_row *row, const
  * constructed.  This allows the data contained in each row to be
  * redirected, for example to store it in an application-specific type, or
  * process it on-the-fly to produce some kind of output directly.  The
- * call-back function will be passed the address of the current
- * ligolw_table structure as its first argument, the address of a newly
- * allocated row structure as its second, and the callback_data pointer as
+ * call-back function will be passed the address of the current struct
+ * ligolw_table as its first argument, the address of a newly allocated
+ * struct ligolw_table_row as its second, and the callback_data pointer as
  * its third argument.  The row_callback() function takes ownership of the
- * row structure, and is responsible for freeing all memory associated with
- * the object when it no longer requires it. The call-back returns 0 to
- * indicate success, non-zero to indicate failure.
+ * row structure and the data contained within it, and is responsible for
+ * freeing all memory associated with the object when it no longer requires
+ * it.  All allocated cell data can be freed with
+ * ligolw_table_free_row_data(), and the struct ligolw_table_row freed with
+ * free().  The call-back returns 0 to indicate success, non-zero to
+ * indicate failure.
  *
- * ligolw_table_parse() return the pointer to the new struct ligolw_table
+ * If the Table element is empty, the row_callback() function will not be
+ * called.
+ *
+ * ligolw_table_parse() returns the pointer to the new struct ligolw_table
  * structure on success, NULL on failure.
  */
 
