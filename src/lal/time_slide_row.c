@@ -69,6 +69,8 @@ int ligolw_time_slide_row_callback(struct ligolw_table *table, struct ligolw_tab
 	*head = new;
 
 	/* success */
+	ligolw_table_free_row_data(table, row);
+	free(row);
 	return 0;
 
 error:

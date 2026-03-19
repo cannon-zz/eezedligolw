@@ -111,6 +111,8 @@ int ligolw_sim_inspiral_row_callback(struct ligolw_table *table, struct ligolw_t
 	*head = new;
 
 	/* success */
+	ligolw_table_free_row_data(table, row);
+	free(row);
 	return 0;
 
 error:
