@@ -30,7 +30,7 @@ int ligolw_sim_inspiral_row_callback(struct ligolw_table *table, struct ligolw_t
 	SimInspiralTable **head = data;
 	SimInspiralTable *new = LALCalloc(1, sizeof(*new));	/* ugh, lal */
 	struct ligolw_unpacking_spec spec[] = {
-		{"process_id", &new->process_id, NULL, ligolw_cell_type_int_8s, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{"process:process_id", &new->process_id, NULL, ligolw_cell_type_int_8s, LIGOLW_COLUMN_FLAGS_REQUIRED},
 		{"waveform", NULL, NULL, ligolw_cell_type_lstring, LIGOLW_COLUMN_FLAGS_REQUIRED},
 		{"geocent_end_time", &new->geocent_end_time.gpsSeconds, NULL, ligolw_cell_type_int_4s, LIGOLW_COLUMN_FLAGS_REQUIRED},
 		{"geocent_end_time_ns", &new->geocent_end_time.gpsNanoSeconds, NULL, ligolw_cell_type_int_4s, LIGOLW_COLUMN_FLAGS_REQUIRED},
