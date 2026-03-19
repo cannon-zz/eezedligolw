@@ -34,7 +34,22 @@ int ligolw_sim_inspiral_row_callback(struct ligolw_table *table, struct ligolw_t
 		{"waveform", NULL, NULL, ligolw_cell_type_lstring, LIGOLW_COLUMN_FLAGS_REQUIRED},
 		{"geocent_end_time", &new->geocent_end_time.gpsSeconds, NULL, ligolw_cell_type_int_4s, LIGOLW_COLUMN_FLAGS_REQUIRED},
 		{"geocent_end_time_ns", &new->geocent_end_time.gpsNanoSeconds, NULL, ligolw_cell_type_int_4s, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		/* don't load detector end times:  they're stupid */
+
+		/* GMST:  optional */
+		{"end_time_gmst", &new->end_time_gmst, NULL, ligolw_cell_type_real_8, LIGOLW_COLUMN_FLAGS_NONE},
+
+		/* detector end times:  optional */
+		{"h_end_time", &new->h_end_time.gpsSeconds, NULL, ligolw_cell_type_int_4s, LIGOLW_COLUMN_FLAGS_NONE},
+		{"h_end_time_ns", &new->h_end_time.gpsNanoSeconds, NULL, ligolw_cell_type_int_4s, LIGOLW_COLUMN_FLAGS_NONE},
+		{"l_end_time", &new->l_end_time.gpsSeconds, NULL, ligolw_cell_type_int_4s, LIGOLW_COLUMN_FLAGS_NONE},
+		{"l_end_time_ns", &new->l_end_time.gpsNanoSeconds, NULL, ligolw_cell_type_int_4s, LIGOLW_COLUMN_FLAGS_NONE},
+		{"g_end_time", &new->g_end_time.gpsSeconds, NULL, ligolw_cell_type_int_4s, LIGOLW_COLUMN_FLAGS_NONE},
+		{"g_end_time", &new->g_end_time.gpsNanoSeconds, NULL, ligolw_cell_type_int_4s, LIGOLW_COLUMN_FLAGS_NONE},
+		{"t_end_time", &new->t_end_time.gpsSeconds, NULL, ligolw_cell_type_int_4s, LIGOLW_COLUMN_FLAGS_NONE},
+		{"t_end_time", &new->t_end_time.gpsNanoSeconds, NULL, ligolw_cell_type_int_4s, LIGOLW_COLUMN_FLAGS_NONE},
+		{"v_end_time", &new->v_end_time.gpsSeconds, NULL, ligolw_cell_type_int_4s, LIGOLW_COLUMN_FLAGS_NONE},
+		{"v_end_time", &new->v_end_time.gpsNanoSeconds, NULL, ligolw_cell_type_int_4s, LIGOLW_COLUMN_FLAGS_NONE},
+
 		{"source", NULL, NULL, ligolw_cell_type_lstring, LIGOLW_COLUMN_FLAGS_REQUIRED},
 		{"mass1", &new->mass1, NULL, ligolw_cell_type_real_4, LIGOLW_COLUMN_FLAGS_REQUIRED},
 		{"mass2", &new->mass2, NULL, ligolw_cell_type_real_4, LIGOLW_COLUMN_FLAGS_REQUIRED},
@@ -66,7 +81,14 @@ int ligolw_sim_inspiral_row_callback(struct ligolw_table *table, struct ligolw_t
 		{"phi0", &new->phi0, NULL, ligolw_cell_type_real_4, LIGOLW_COLUMN_FLAGS_REQUIRED},
 		{"f_lower", &new->f_lower, NULL, ligolw_cell_type_real_4, LIGOLW_COLUMN_FLAGS_REQUIRED},
 		{"f_final", &new->f_final, NULL, ligolw_cell_type_real_4, LIGOLW_COLUMN_FLAGS_REQUIRED},
-		/* don't load effective distances:  they're stupid */
+
+		/* effective distances:  optional */
+		{"eff_dist_h", &new->eff_dist_h, NULL, ligolw_cell_type_real_4, LIGOLW_COLUMN_FLAGS_NONE},
+		{"eff_dist_l", &new->eff_dist_l, NULL, ligolw_cell_type_real_4, LIGOLW_COLUMN_FLAGS_NONE},
+		{"eff_dist_g", &new->eff_dist_g, NULL, ligolw_cell_type_real_4, LIGOLW_COLUMN_FLAGS_NONE},
+		{"eff_dist_t", &new->eff_dist_t, NULL, ligolw_cell_type_real_4, LIGOLW_COLUMN_FLAGS_NONE},
+		{"eff_dist_v", &new->eff_dist_v, NULL, ligolw_cell_type_real_4, LIGOLW_COLUMN_FLAGS_NONE},
+
 		{"numrel_mode_min", &new->numrel_mode_min, NULL, ligolw_cell_type_int_4s, LIGOLW_COLUMN_FLAGS_REQUIRED},
 		{"numrel_mode_max", &new->numrel_mode_max, NULL, ligolw_cell_type_int_4s, LIGOLW_COLUMN_FLAGS_REQUIRED},
 		{"numrel_data", NULL, NULL, ligolw_cell_type_lstring, LIGOLW_COLUMN_FLAGS_REQUIRED},
