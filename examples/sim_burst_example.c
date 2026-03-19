@@ -22,11 +22,7 @@
 #include <lal/SnglBurstUtils.h>
 #include <lal/XLALError.h>
 #include <ezligolw/ezligolw.h>
-
-
-int sim_burst_row_callback(struct ligolw_table *, struct ligolw_table_row *, void *);
-int time_slide_row_callback(struct ligolw_table *, struct ligolw_table_row *, void *);
-int sim_insprial_row_callback(struct ligolw_table *, struct ligolw_table_row *, void *);
+#include <ezligolw/lal.h>
 
 
 /*
@@ -91,8 +87,8 @@ int XLALSimBurstTableFromLIGOLw(
 {
 	int failure = false;
 
-	failure |= XLALTableFromLIGOLw(sims, filename, "sim_burst", sim_burst_row_callback);
-	failure |= XLALTableFromLIGOLw(tisls, filename, "time_slide", time_slide_row_callback);
+	failure |= XLALTableFromLIGOLw(sims, filename, "sim_burst", ligolw_sim_burst_row_callback);
+	failure |= XLALTableFromLIGOLw(tisls, filename, "time_slide", ligolw_time_slide_row_callback);
 
 	return failure;
 }

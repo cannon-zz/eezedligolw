@@ -1,1 +1,1 @@
-pkginclude_HEADERS = ezligolw.h
+pkginclude_HEADERS = ezligolw.h lal.h

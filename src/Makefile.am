@@ -1,1 +1,1 @@
-SUBDIRS = ezxml include lib
+SUBDIRS = ezxml include lib lal

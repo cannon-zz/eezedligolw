@@ -1,5 +1,4 @@
 AM_CPPFLAGS = -I../src/include
-LDADD = ../src/lib/libezligolw.la ../src/ezxml/libezxml.la
 
 noinst_PROGRAMS =
 TESTS =
@@ -11,9 +10,11 @@ if COND_LAL
 endif
 
 psd_example_SOURCES = psd_example.c
+psd_example_LDADD = ../src/lal/libezligolw-lal.la ../src/lib/libezligolw.la ../src/ezxml/libezxml.la
 psd_example_LDFLAGS = $(LAL_LIBS) $(LALMETAIO_LIBS)
 psd_example_CFLAGS = $(LAL_CFLAGS) $(LALMETAIO_LIBS)
 
-sim_burst_example_SOURCES = sim_burst_example.c sim_burst_row.c time_slide_row.c sim_inspiral_row.c
-sim_burst_example_LDFLAGS = $(LAL_LIBS) $(LALMETAIO_LIBS) $(LALBURST_LIBS)
-sim_burst_example_CFLAGS = $(LAL_CFLAGS) $(LALMETAIO_LIBS) $(LALBURST_LIBS)
+sim_burst_example_SOURCES = sim_burst_example.c
+sim_burst_example_LDFLAGS = $(LAL_LIBS) $(LALMETAIO_LIBS)
+sim_burst_example_LDADD = ../src/lal/libezligolw-lal.la ../src/lib/libezligolw.la ../src/ezxml/libezxml.la
+sim_burst_example_CFLAGS = -I../src/include $(LAL_CFLAGS) $(LALMETAIO_CLAGS)

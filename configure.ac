@@ -14,6 +14,7 @@ AC_CONFIG_FILES([                        \
 	src/include/Makefile             \
 	src/include/ezligolw/Makefile    \
 	src/lib/Makefile                 \
+	src/lal/Makefile                 \
 	examples/Makefile                \
 ])
 

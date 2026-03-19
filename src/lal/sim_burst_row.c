@@ -21,17 +21,10 @@
 #include <lal/LIGOMetadataUtils.h>
 #include <lal/XLALError.h>
 #include <ezligolw/ezligolw.h>
+#include <ezligolw/lal.h>
 
 
-/*
- * Demonstration of the implementation of an XLAL-style (near) drop-in
- * replacement of LALSimBurstTableFromLIGOLw() built on top of ezligolw.
- * For clarity, the LAL code's ability to filter the input trigger list by
- * GPS time has not been implemented here.
- */
-
-
-int sim_burst_row_callback(struct ligolw_table *table, struct ligolw_table_row *row, void *data)
+int ligolw_sim_burst_row_callback(struct ligolw_table *table, struct ligolw_table_row *row, void *data)
 {
 	int result_code;
 	SimBurst **head = data;

@@ -21,9 +21,10 @@
 #include <lal/LIGOMetadataUtils.h>
 #include <lal/XLALError.h>
 #include <ezligolw/ezligolw.h>
+#include <ezligolw/lal.h>
 
 
-int sim_inspiral_row_callback(struct ligolw_table *table, struct ligolw_table_row *row, void *data)
+int ligolw_sim_inspiral_row_callback(struct ligolw_table *table, struct ligolw_table_row *row, void *data)
 {
 	int result_code;
 	SimInspiralTable **head = data;
