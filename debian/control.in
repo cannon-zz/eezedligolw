@@ -18,36 +18,41 @@ Architecture: amd64
 Depends: ${shlibs:Depends}, ${misc:Depends},
  libb64,
  zlib1g
-Suggests:
- libezligolw-bin
 Description: LIGO Light-Weight XML I/O library built around ezxml.
  This package provides a C library enabling limited support for documents
  in the LIGO Light-Weight XML file format.  It occupies a niche in feature
- space similar to the metaio library.  Table, Array, and Param elements and
- their constituents are well supported, which is sufficient to interact
- with most signal detection and interpretation codes.  For example PSD
- files, template bank files, GstLAL ranking statistic data files, burst and
- compact object merger injection lists, and detection search results files
- are well supported.  This library, however, is not intended to ever
+ space similar to the metaio library.  Array, and Param, Table and Time
+ elements and their constituents are well supported, which is sufficient to
+ interact with most signal detection and interpretation codes.  For example
+ PSD files, template bank files, GstLAL ranking statistic data files, burst
+ and compact object merger injection lists, and detection search results
+ files are well supported.  This library, however, is not intended to ever
  provide full generic support for the file format.  It has been written
  mostly out of necessity on an as-needed basis.  People looking for a full
  general-purpose I/O library for the file format are directed to the
- python3-ligolw package.  There is no C solution.
+ python3-ligolw package.
+
+Package: libezligolw-lal
+Architecture: amd64
+Depends: ${shlibs:Depends}, ${misc:Depends},
+ libezligolw (= ${binary:Version}),
+ liblal20 (>= @MIN_LAL_VERSION@),
+ liblalmetaio11 (>= @MIN_LALMETAIO_VERSION@),
+ zlib1g
+Description: LIGO Light-Weight XML I/O library built around ezxml.
+ This package provides a C library faciliating the use of libezligolw with
+ lalsuite based codes.  It occupies a niche in feature space similar to the
+ lalmetaio library.  Tabular data can be loaded into LAL table row linked
+ lists from a small number of supported tables, and PSD files can be read.
 
 Package: libezligolw-dev
 Architecture: any
 Depends: ${misc:Depends},
  libezligolw (= ${binary:Version}),
+ libezligolw-lal (= ${binary:Version}),
+ lal-dev (>= @MIN_LAL_VERSION@),
+ lalmetaio-dev (>= @@MIN_LALMETAIO_VERSION@@),
  libc6-dev
-Description: Files needed for compiling ezligolw based software.
- This package contains the files needed to compile ezligolw based software.
-
-Package: libezligolw-bin
-Architecture: amd64
-Depends: ${shlibs:Depends}, ${misc:Depends},
- libezligolw (= ${binary:Version}),
- liblal20 (>= @MIN_LAL_VERSION@),
- liblalburst8 (>= @MIN_LALBURST_VERSION@),
- liblalmetaio11 (>= @MIN_LALMETAIO_VERSION@)
-Description: LIGO Light-Weight XML I/O library command line utilities.
- This package provides example programs demonstrating libezligolw.
+Description: Files needed for compiling ezligolw and ezligolw-lal based software.
+ This package contains the files needed to compile ezligolw and
+ ezligolw-lal based software.

@@ -1,1 +1,2 @@
-usr/lib/*/*.so.*
+usr/lib/*/libezxml.so.*
+usr/lib/*/libezligolw.so.*

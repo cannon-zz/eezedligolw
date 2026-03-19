@@ -5,7 +5,7 @@ EXTRA_DIST = \
 	control.in \
 	copyright \
 	libezligolw.install \
-	libezligolw-bin.install \
 	libezligolw-dev.install \
+	libezligolw-lal.install \
 	rules \
 	source/format
