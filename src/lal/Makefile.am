@@ -3,9 +3,9 @@ AM_CPPFLAGS = -I../include $(LAL_CFLAGS) $(LALMETAIO_LIBS)
 lib_LTLIBRARIES = libezligolw-lal.la
 
 libezligolw_lal_la_SOURCES = \
-	sim_burst_row.c \
-	sim_inspiral_row.c \
-	time_slide_row.c \
+	sim_burst.c \
+	sim_inspiral.c \
+	time_slide.c \
 	utils.c \
 	../include/ezligolw/ezligolw-lal.h
 libezligolw_lal_la_LIBADD = ../ezxml/libezxml.la ../lib/libezligolw.la
