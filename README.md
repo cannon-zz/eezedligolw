@@ -44,9 +44,8 @@ documents.
 ezxml is abandonware, but there are some places where forks of it live that
 have received some updates.  I'll document the ones I know of here to make
 it easier to find them again in the future.
-
-https://github.com/lxfontes/ezxml
-https://github.com/RT-Thread-packages/ezXML
+- https://github.com/lxfontes/ezxml
+- https://github.com/RT-Thread-packages/ezXML
 
 Both of those claim to be version 0.8.5 but 0.8.6 existed before the
 project was abandoned and a snapshot of 0.8.6 is what's in this tree.  It's
