@@ -27,6 +27,7 @@ int ligolw_lal_table_unpack_row(struct ligolw_table *, struct ligolw_table_row, 
 
 int ligolw_sim_burst_row_callback(struct ligolw_table *, struct ligolw_table_row *, void *);
 int ligolw_sim_inspiral_row_callback(struct ligolw_table *, struct ligolw_table_row *, void *);
+int ligolw_sngl_inspiral_row_callback(struct ligolw_table *, struct ligolw_table_row *, void *);
 int ligolw_time_slide_row_callback(struct ligolw_table *, struct ligolw_table_row *, void *);
 
 void *ligolw_lal_table_get(ezxml_t, const char *, int (struct ligolw_table *, struct ligolw_table_row *, void *));

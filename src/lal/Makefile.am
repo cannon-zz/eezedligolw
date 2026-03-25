@@ -7,6 +7,7 @@ libezligolw_lal_la_SOURCES = \
 	psd.c \
 	sim_burst.c \
 	sim_inspiral.c \
+	sngl_inspiral.c \
 	time_slide.c \
 	utils.c
 libezligolw_lal_la_LIBADD = ../ezxml/libezxml.la ../lib/libezligolw.la

@@ -77,10 +77,12 @@ void *ligolw_lal_table_get(
 	if(row_callback) {
 	} else if(!strcmp(table_name, "sim_burst"))
 		row_callback = ligolw_sim_burst_row_callback;
-	else if(!strcmp(table_name, "time_slide"))
-		row_callback = ligolw_time_slide_row_callback;
 	else if(!strcmp(table_name, "sim_inspiral"))
 		row_callback = ligolw_sim_inspiral_row_callback;
+	else if(!strcmp(table_name, "sngl_inspiral"))
+		row_callback = ligolw_sngl_inspiral_row_callback;
+	else if(!strcmp(table_name, "time_slide"))
+		row_callback = ligolw_time_slide_row_callback;
 	else {
 		XLALPrintError("table \"%s\" not recognized\n", table_name);
 		XLAL_ERROR_NULL(XLAL_EINVAL);
