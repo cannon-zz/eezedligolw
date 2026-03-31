@@ -8,7 +8,6 @@ Build-Depends:
  fakeroot,
  libb64-dev,
  liblal-dev (>= @MIN_LAL_VERSION@),
- liblalburst-dev (>= @MIN_LALBURST_VERSION@),
  liblalmetaio-dev (>= @MIN_LALMETAIO_VERSION@),
  pkg-config,
  zlib1g-dev
@@ -51,7 +50,7 @@ Depends: ${misc:Depends},
  libezligolw (= ${binary:Version}),
  libezligolw-lal (= ${binary:Version}),
  lal-dev (>= @MIN_LAL_VERSION@),
- lalmetaio-dev (>= @@MIN_LALMETAIO_VERSION@@),
+ lalmetaio-dev (>= @MIN_LALMETAIO_VERSION@),
  libc6-dev
 Description: Files needed for compiling ezligolw and ezligolw-lal based software.
  This package contains the files needed to compile ezligolw and
