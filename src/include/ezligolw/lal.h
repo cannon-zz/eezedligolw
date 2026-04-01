@@ -17,6 +17,10 @@
  */
 
 
+#ifndef _LIBEZLIGOLW_LAL_H_
+#define _LIBEZLIGOLW_LAL_H_
+
+
 #include <lal/LALDict.h>
 #include <lal/FrequencySeries.h>
 #include <ezligolw/ezligolw.h>
@@ -39,3 +43,6 @@ REAL8FrequencySeries *ligolw_REAL8FrequencySeries_parse(ezxml_t);
 
 LALDict *ligolw_PSDs(ezxml_t);
 LALDict *ligolw_PSDsFromFile(const char *);
+
+
+#endif	/* _LIBEZLIGOLW_LAL_H_ */

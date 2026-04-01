@@ -17,6 +17,10 @@
  */
 
 
+#ifndef _LIBEZLIGOLW_EZLIGOLW_H_
+#define _LIBEZLIGOLW_EZLIGOLW_H_
+
+
 #include <complex.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -140,3 +144,6 @@ ezxml_t ligolw_time_get(ezxml_t, const char *);
 union ligolw_cell ligolw_param_parse(ezxml_t, enum ligolw_cell_type *);
 ezxml_t ligolw_param_get(ezxml_t, const char *);
 int ligolw_param_get_as_c(ezxml_t, void *, enum ligolw_cell_type);
+
+
+#endif /* _LIBEZLIGOLW_EZLIGOLW_H_ */
