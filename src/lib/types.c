@@ -18,6 +18,7 @@
 
 
 #include <assert.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 #include <b64/cdecode.h>
