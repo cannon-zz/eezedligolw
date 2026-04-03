@@ -1,6 +1,8 @@
 AM_CPPFLAGS = -I$(top_srcdir)/src/include
 
+if COND_LAL
 lib_LTLIBRARIES = libezligolw-lal.la
+endif
 
 libezligolw_lal_la_SOURCES = \
 	frequency_series.c \
