@@ -44,15 +44,11 @@ AC_CHECK_LIB([b64], [main], , [AC_MSG_ERROR([cannot find the b64 library])])
 # Check for LAL
 AC_SUBST([MIN_LAL_VERSION], [7.0.0])
 AC_SUBST([MIN_LALMETAIO_VERSION], [4.0.0])
-PKG_CHECK_MODULES([LAL], [lal >= ${MIN_LAL_VERSION} lalsupport >= ${MIN_LAL_VERSION}], [HAVE_LAL=yes], [HAVE_LAL=no ; AC_MSG_WARN([Not Found!])])
+PKG_CHECK_MODULES([LAL], [lal >= ${MIN_LAL_VERSION} lalsupport >= ${MIN_LAL_VERSION} lalmetaio >= ${MIN_LALMETAIO_VERSION}], [HAVE_LAL=yes], [HAVE_LAL=no ; AC_MSG_WARN([Not Found!])])
 AC_SUBST([HAVE_LAL])
 AC_SUBST([LAL_CFLAGS])
 AC_SUBST([LAL_LIBS])
-PKG_CHECK_MODULES([LALMETAIO], [lalmetaio >= ${MIN_LALMETAIO_VERSION}], [HAVE_LALMETAIO=yes], [HAVE_LALMETAIO=no ; AC_MSG_WARN([Not Found!])])
-AC_SUBST([HAVE_LALMETAIO])
-AC_SUBST([LALMETAIO_CFLAGS])
-AC_SUBST([LALMETAIO_LIBS])
-AM_CONDITIONAL([COND_LAL], [test "$HAVE_LAL" == "yes" -a "$HAVE_LALMETAIO" == "yes"])
+AM_CONDITIONAL([COND_LAL], [test "$HAVE_LAL" == "yes"])
 
 # Generate configured output files
 AC_PROG_MAKE_SET
