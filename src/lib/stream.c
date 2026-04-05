@@ -107,8 +107,8 @@ enum ligolw_stream_encoding ligolw_stream_check_encoding(ezxml_t stream)
 	/*
 	 * check for and interpret Encoding.  attribute value is
 	 * separated on ',' characters, each piece has leading and trailing
-	 * stripped, and is compared to the list of recognized encoding
-	 * keywords.
+	 * whitespace stripped, and is compared to the list of recognized
+	 * encoding keywords.
 	 *
 	 * the tokenizer is given all the whitespace characters in addition
 	 * to the ',' as a lazy way to strip leading and trailing

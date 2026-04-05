@@ -25,7 +25,7 @@
 
 
 /*
- * Demonstration of the LAL tabular data loading.
+ * Demonstration of LAL tabular data loading.
  */
 
 

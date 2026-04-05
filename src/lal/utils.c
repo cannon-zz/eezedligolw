@@ -59,7 +59,7 @@ int ligolw_lal_table_unpack_row(struct ligolw_table *table, struct ligolw_table_
  * error.  NOTE that an empty table will also be reported as NULL.  Errors
  * are reported using the LAL error reporting mechanism, and so the
  * distinction between a failed read and a successful read of an empty
- * table can be checked by the consulting xlalErrno.
+ * table can be checked by consulting xlalErrno.
  */
 
 
