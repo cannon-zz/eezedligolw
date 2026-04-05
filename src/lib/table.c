@@ -19,6 +19,7 @@
 
 #include <assert.h>
 #include <complex.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -130,6 +131,8 @@ struct ligolw_table *ligolw_table_parse(ezxml_t elem, int (row_callback)(struct 
 	table->n_rows = 0;
 	table->rows = NULL;
 
+	/* the table can now be free()ed with ligolw_table_free() */
+
 	for(column = ezxml_child(elem, "Column"); column; column = column->next) {
 		table->columns = realloc(table->columns, (table->n_columns + 1) * sizeof(*table->columns));
 
@@ -148,11 +151,13 @@ struct ligolw_table *ligolw_table_parse(ezxml_t elem, int (row_callback)(struct 
 
 	table->delimiter = ligolw_stream_delimiter(stream);
 	if(table->delimiter < 0) {
-		/* FIXME:  handle invalid delimiter */
+		ligolw_table_free(table);
+		return NULL;
 	}
 
 	if(ligolw_stream_check_encoding(stream) != ligolw_stream_enc_text) {
-		/* FIXME:  handle invalid or unsupported encoding */
+		ligolw_table_free(table);
+		return NULL;
 	}
 
 	if(!row_callback)
