@@ -20,10 +20,13 @@
 #ifndef _LIBEZLIGOLW_LAL_H_
 #define _LIBEZLIGOLW_LAL_H_
 
-
 #include <lal/LALDict.h>
 #include <lal/FrequencySeries.h>
 #include <ezligolw/ezligolw.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
 int ligolw_lal_table_unpack_row(struct ligolw_table *, struct ligolw_table_row, struct ligolw_unpacking_spec *);
@@ -37,12 +40,15 @@ int ligolw_time_slide_row_callback(struct ligolw_table *, struct ligolw_table_ro
 void *ligolw_lal_table_get(ezxml_t, const char *, int (struct ligolw_table *, struct ligolw_table_row *, void *));
 
 
-
 REAL8FrequencySeries *ligolw_REAL8FrequencySeries_parse(ezxml_t);
 
 
 LALDict *ligolw_PSDs(ezxml_t);
 LALDict *ligolw_PSDsFromFile(const char *);
 
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif	/* _LIBEZLIGOLW_LAL_H_ */

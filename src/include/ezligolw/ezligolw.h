@@ -20,11 +20,14 @@
 #ifndef _LIBEZLIGOLW_EZLIGOLW_H_
 #define _LIBEZLIGOLW_EZLIGOLW_H_
 
-
 #include <complex.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <ezligolw/ezxml.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
 enum ligolw_cell_type {
@@ -145,5 +148,9 @@ union ligolw_cell ligolw_param_parse(ezxml_t, enum ligolw_cell_type *);
 ezxml_t ligolw_param_get(ezxml_t, const char *);
 int ligolw_param_get_as_c(ezxml_t, void *, enum ligolw_cell_type);
 
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _LIBEZLIGOLW_EZLIGOLW_H_ */
