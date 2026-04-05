@@ -15,7 +15,7 @@ Build-Depends:
 Package: libezligolw
 Architecture: amd64
 Depends: ${shlibs:Depends}, ${misc:Depends},
- libb64,
+ libb64-0d,
  zlib1g
 Description: LIGO Light-Weight XML I/O library built around ezxml.
  This package provides a C library enabling limited support for documents
