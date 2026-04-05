@@ -194,7 +194,13 @@ void ligolw_stream_next_token(char **txt, char **start, char **end, char delimit
 		 * character, or the null terminator */
 		for(; *c && *c != ESCAPE_CHAR && *c != QUOTE_CHAR; c++);
 
-		if(*c == ESCAPE_CHAR) {
+		if(*c == QUOTE_CHAR) {
+			/* no escaped characters encountered.  record the
+			 * end position */
+			*end = c;
+			/* advance over the quote character */
+			c++;
+		} else if(*c == ESCAPE_CHAR) {
 			/* this quoted token contains escaped special
 			 * characters.  process the remainder of the token
 			 * using escape handling logic */
@@ -224,6 +230,7 @@ start:
 				} else if(*j != ESCAPE_CHAR && *j != QUOTE_CHAR) {
 					/* FIXME:  report unrecognized escape
 					 * sequence error */
+					assert(false);
 				}
 			}
 			/* move the final character, the one that
@@ -236,15 +243,12 @@ start:
 			/* continue processing from the original position
 			 * of the token's end */
 			c = j;
-		} else
-			/* no escaped characters encountered.  record the
-			 * end position */
-			*end = c;
-
-		/* skip the quote character (might be at end of buffer, at
-		 * a null terminator, to only check) */
-		if(*c == QUOTE_CHAR)
-			c++;
+		} else {
+			/* hit null terminator without finding closing
+			 * quote character */
+			/* FIXME:  report unterminatd quoted string */
+			assert(false);
+		}
 	} else {
 		/* unquoted token */
 		/* start at first non-white space character */
