@@ -36,7 +36,7 @@ copies of the document (the text copy ezxml loaded, and the decoded data
 structures extracted from it).
 
 The ezxml API uses plain char types everyhwere, and its unicode support is
-hit and miss.  Assume you cannot use non-ASCII characters if your
+hit and miss.  Assume you cannot use non-ASCII characters in your
 documents.
 
 ## ezxml Status
