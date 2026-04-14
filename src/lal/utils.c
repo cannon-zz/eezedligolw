@@ -79,6 +79,8 @@ void *ligolw_lal_table_get(
 		row_callback = ligolw_sim_burst_row_callback;
 	else if(!strcmp(table_name, "sim_inspiral"))
 		row_callback = ligolw_sim_inspiral_row_callback;
+	else if(!strcmp(table_name, "sngl_burst"))
+		row_callback = ligolw_sngl_burst_row_callback;
 	else if(!strcmp(table_name, "sngl_inspiral"))
 		row_callback = ligolw_sngl_inspiral_row_callback;
 	else if(!strcmp(table_name, "time_slide"))

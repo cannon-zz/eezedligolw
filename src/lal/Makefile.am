@@ -9,6 +9,7 @@ libezligolw_lal_la_SOURCES = \
 	psd.c \
 	sim_burst.c \
 	sim_inspiral.c \
+	sngl_burst.c \
 	sngl_inspiral.c \
 	time_slide.c \
 	utils.c
