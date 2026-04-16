@@ -52,7 +52,7 @@ int ligolw_time_slide_row_callback(struct ligolw_table *table, struct ligolw_tab
 	 * errors here */
 	ligolw_cell_string_copy(ligolw_row_get_cell(row, "instrument", NULL), new->instrument, LIGOMETA_STRING_MAX - 1);
 
-	/* add new sim to head of linked list */
+	/* add new row object to head of linked list */
 	new->next = *head;
 	*head = new;
 

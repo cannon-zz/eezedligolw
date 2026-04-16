@@ -113,7 +113,7 @@ int ligolw_sim_burst_row_callback(struct ligolw_table *table, struct ligolw_tabl
 	if(result_code)
 		goto error;
 
-	/* add new sim to head of linked list */
+	/* add new row object to head of linked list */
 	new->next = *head;
 	*head = new;
 

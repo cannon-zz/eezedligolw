@@ -68,7 +68,7 @@ int ligolw_sngl_burst_row_callback(struct ligolw_table *table, struct ligolw_tab
 	ligolw_cell_string_copy(ligolw_row_get_cell(row, "search", NULL), new->search, LIGOMETA_SEARCH_MAX - 1);
 	ligolw_cell_string_copy(ligolw_row_get_cell(row, "channel", NULL), new->channel, LIGOMETA_CHANNEL_MAX - 1);
 
-	/* add new object to head of linked list */
+	/* add new row object to head of linked list */
 	new->next = *head;
 	*head = new;
 

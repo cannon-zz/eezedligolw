@@ -117,7 +117,7 @@ int ligolw_sim_inspiral_row_callback(struct ligolw_table *table, struct ligolw_t
 	ligolw_cell_string_copy(ligolw_row_get_cell(row, "numrel_data", NULL), new->numrel_data, LIGOMETA_STRING_MAX - 1);
 	ligolw_cell_string_copy(ligolw_row_get_cell(row, "taper", NULL), new->taper, LIGOMETA_INSPIRALTAPER_MAX - 1);
 
-	/* add new sim to head of linked list */
+	/* add new row object to head of linked list */
 	new->next = *head;
 	*head = new;
 
