@@ -13,6 +13,8 @@ config.status
 configure
 configure~
 debian/control
+examples/*.log
+examples/*.trs
 examples/psd_example
 examples/sim_burst_example
 ezligolw.pc
