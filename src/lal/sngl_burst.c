@@ -29,7 +29,7 @@ int ligolw_sngl_burst_row_callback(struct ligolw_table *table, struct ligolw_tab
 	SnglBurst **head = data;
 	SnglBurst *new = LALCalloc(1, sizeof(*new));
 	struct ligolw_unpacking_spec spec[] = {
-		{"process_id", &new->process_id, NULL, ligolw_cell_type_int_8s, LIGOLW_COLUMN_FLAGS_REQUIRED},
+		{"process:process_id", &new->process_id, NULL, ligolw_cell_type_int_8s, LIGOLW_COLUMN_FLAGS_REQUIRED},
 		{"event_id", &new->event_id, NULL, ligolw_cell_type_int_8s, LIGOLW_COLUMN_FLAGS_REQUIRED},
 		{"ifo", NULL, NULL, ligolw_cell_type_lstring, LIGOLW_COLUMN_FLAGS_REQUIRED},
 		{"search", NULL, NULL, ligolw_cell_type_lstring, LIGOLW_COLUMN_FLAGS_REQUIRED},
@@ -57,7 +57,7 @@ int ligolw_sngl_burst_row_callback(struct ligolw_table *table, struct ligolw_tab
 	}
 
 	/* unpack.  have to do the strings manually because they get copied
-	 * by value rather than reference.  */
+	 * by value rather than reference. */
 	if(ligolw_table_unpack_row(table, *row, spec))
 		goto error;
 
