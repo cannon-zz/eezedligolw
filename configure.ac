@@ -1,5 +1,5 @@
 # Preamble
-AC_INIT([ezligolw],[0.2.0],[kipp@gravity.phys.uwm.edu])
+AC_INIT([ezligolw],[0.3.0],[kipp@gravity.phys.uwm.edu])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([gnuscripts])
 AC_CONFIG_MACRO_DIRS([gnuscripts])
