@@ -8,10 +8,11 @@ are enough to allow a PSD file to be read.
 
 As with libmetaio, this library also does not solve the problem of
 providing a comprehensive LIGO Light-Weight XML I/O and document
-manipulation framework.  Nothing at all like the Python ligolw library's
-features are available here.  This library provides a relatively low-level
-framework upon which to write code to extract data from LIGO Light-Weight
-XML documents.  No facility is provided to write data back to disk.
+manipulation framework.  Nothing at all like the Python
+[ligolw](https://git.ligo.org/kipp/python-ligo-lw) library's features are
+available here.  This library provides a basic low-level framework upon
+which to write code to extract data from LIGO Light-Weight XML documents.
+No facility is provided to write data back to disk.
 
 ## Details
 
@@ -20,20 +21,22 @@ code is available only for Array, Param, Table and Time elements (and their
 children).  See the ezligolw.h file for the library's public interface.
 This should be enough for the majority of data analysis applications.
 
-Table element trees can be parsed into a generic, inefficient, internal
-representation, or an external row building call-back can be provided to
-store the decoded data into data structures provided by the calling code.
+After being loaded into memory and parsed, Table element trees can be
+translated into a generic, inefficient, internal representation, or an
+external row building call-back can be provided to translate the data into
+structures provided by the calling code.
 
 A modest support library is provided to assist with using the parsing code
-together with lalsuite.  Facilities are provided to load a limited
-selection of LAL table structures from XML files into LAL linked lists, and
-to extract LALDict dictionaries of REAL8FrequencySeries PSDs from XML
+together with [lalsuite](https://git.ligo.org/lscsoft/lalsuite).
+Facilities are provided to translate a limited selection of LSC tables from
+LIGO Light-Weight XML files into linked lists of LAL table row structures,
+and to extract LALDict dictionaries of REAL8FrequencySeries PSDs from XML
 files.  See the examples/ directory for demonstrations.
 
 ezxml reads the entire document into memory as a string, which typically
 means enough memory is required, at least momentarily, to store two full
-copies of the document (the text copy ezxml loaded, and the decoded data
-structures extracted from it).
+copies of the document:  the text copy ezxml loaded, and the decoded data
+structures extracted from it.
 
 The ezxml API uses plain char types everyhwere, and its unicode support is
 hit and miss.  Assume you cannot use non-ASCII characters in your
