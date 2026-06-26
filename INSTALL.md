@@ -1,7 +1,7 @@
 Installation
 ============
 
-It is recommend that users install pre-built packages for their system.  .deb and .rpm packages might be available if you look around for them, or you can make them yourself from source.
+It is recommended that users install pre-built packages for their system.  .deb and .rpm packages might be available if you look around for them, or you can make them yourself from source.
 
 From git
 --------
