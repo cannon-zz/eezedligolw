@@ -1,10 +1,11 @@
 # Overview
 
-This is an an alternative to libmetaio based on the ezxml library.  The
-advantage this offers over libmetaio is that it can handle the full LIGO
-Light-Weight XML DTD.  For example, in addition to Table elements, which
-libmetaio supports, Array, Param, and Time elements are supported, which
-are enough to allow a PSD file to be read.
+This is an an alternative to
+[libmetaio](https://github.com/cannon-zz/metaio) based on the ezxml
+library.  The advantage this offers over libmetaio is that it can handle
+the full LIGO Light-Weight XML DTD.  For example, in addition to Table
+elements, which libmetaio supports, Array, Param, and Time elements are
+supported, which are enough to allow a PSD file to be read.
 
 As with libmetaio, this library also does not solve the problem of
 providing a comprehensive LIGO Light-Weight XML I/O and document
